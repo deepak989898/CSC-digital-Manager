@@ -78,10 +78,20 @@ export default function ApplicationDetailPage() {
   }, [id, profile?.shopId]);
 
   const handleStatusUpdate = async () => {
-    if (!application) return;
+    if (!application || !profile) return;
     setStatusLoading(true);
     try {
-      await updateDocument("applications", id, { status: newStatus });
+      const updates: Record<string, unknown> = {
+        status: newStatus,
+        lastUpdatedById: profile.userId,
+        lastUpdatedByName: profile.displayName,
+      };
+      if (newStatus === "completed") {
+        updates.completedById = profile.userId;
+        updates.completedByName = profile.displayName;
+        updates.completedAt = new Date().toISOString();
+      }
+      await updateDocument("applications", id, updates);
       toast.success("Status updated");
       await loadData();
     } catch {
@@ -103,11 +113,12 @@ export default function ApplicationDetailPage() {
         customerId: application.customerId,
         customerName: application.customerName,
         name: docType,
-        type: docType,
+        type: docType as DocumentRecord["type"],
         fileName,
         fileURL: url,
         fileSize: file.size,
         mimeType: file.type,
+        uploadedByName: profile.displayName,
         userId: profile.userId,
         shopId: profile.shopId,
       });

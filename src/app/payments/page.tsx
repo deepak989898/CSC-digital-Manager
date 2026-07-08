@@ -38,7 +38,7 @@ export default function PaymentsPage() {
           <StatCard title="Pending" value={formatCurrency(stats.pending)} icon={<Clock className="h-5 w-5" />} color="orange" />
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden text-slate-900 dark:text-slate-100">
           {loading ? (
             <div className="p-6"><TableSkeleton /></div>
           ) : payments.length === 0 ? (
@@ -48,27 +48,27 @@ export default function PaymentsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-slate-100 bg-slate-50">
-                      <th className="text-left px-4 py-3 font-medium text-slate-600">Customer</th>
-                      <th className="text-left px-4 py-3 font-medium text-slate-600">Service</th>
-                      <th className="text-left px-4 py-3 font-medium text-slate-600">Amount</th>
-                      <th className="text-left px-4 py-3 font-medium text-slate-600">Method</th>
-                      <th className="text-left px-4 py-3 font-medium text-slate-600">Status</th>
-                      <th className="text-left px-4 py-3 font-medium text-slate-600 hidden md:table-cell">Date</th>
-                      <th className="text-right px-4 py-3 font-medium text-slate-600">Receipt</th>
+                    <tr className="border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60">
+                      <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Customer</th>
+                      <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Service</th>
+                      <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Amount</th>
+                      <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Method</th>
+                      <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Status</th>
+                      <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300 hidden md:table-cell">Date</th>
+                      <th className="text-right px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Receipt</th>
                     </tr>
                   </thead>
                   <tbody>
                     {paginatedItems.map((payment) => (
-                      <tr key={payment.id} className="border-b border-slate-50 hover:bg-slate-50">
-                        <td className="px-4 py-3 font-medium">{payment.customerName}</td>
-                        <td className="px-4 py-3">{payment.serviceName}</td>
-                        <td className="px-4 py-3 font-semibold">{formatCurrency(payment.amount)}</td>
-                        <td className="px-4 py-3 capitalize">{formatStatusLabel(payment.paymentMethod)}</td>
+                      <tr key={payment.id} className="border-b border-slate-50 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                        <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">{payment.customerName}</td>
+                        <td className="px-4 py-3 text-slate-700 dark:text-slate-200">{payment.serviceName}</td>
+                        <td className="px-4 py-3 font-semibold text-slate-900 dark:text-slate-100">{formatCurrency(payment.amount)}</td>
+                        <td className="px-4 py-3 capitalize text-slate-700 dark:text-slate-200">{formatStatusLabel(payment.paymentMethod)}</td>
                         <td className="px-4 py-3"><Badge status={payment.paymentStatus} /></td>
-                        <td className="px-4 py-3 hidden md:table-cell text-slate-500">{formatDate(payment.paymentDate)}</td>
+                        <td className="px-4 py-3 hidden md:table-cell text-slate-600 dark:text-slate-300">{formatDate(payment.paymentDate)}</td>
                         <td className="px-4 py-3 text-right">
-                          <Link href={`/applications/${payment.applicationId}`} className="inline-flex p-1.5 rounded hover:bg-slate-100 text-slate-500">
+                          <Link href={`/applications/${payment.applicationId}`} className="inline-flex p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300">
                             <Receipt className="h-4 w-4" />
                           </Link>
                         </td>

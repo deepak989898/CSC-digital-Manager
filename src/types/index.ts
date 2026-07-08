@@ -89,15 +89,23 @@ export interface Application extends BaseRecord {
   paymentStatus: PaymentStatus;
   notes?: string;
   dueDate?: string;
+  /** Who last updated / completed this work */
+  completedById?: string;
+  completedByName?: string;
+  completedAt?: string;
+  lastUpdatedById?: string;
+  lastUpdatedByName?: string;
 }
 
 export interface DocumentRecord extends BaseRecord {
-  applicationId: string;
+  /** Optional — customer KYC docs may not belong to an application */
+  applicationId?: string;
   customerId: string;
   customerName: string;
   name: string;
   type: DocumentType;
   category?: string;
+  customName?: string;
   fileName: string;
   fileURL: string;
   fileSize: number;
@@ -105,6 +113,7 @@ export interface DocumentRecord extends BaseRecord {
   isMissing?: boolean;
   verificationStatus?: "pending" | "verified" | "rejected";
   notes?: string;
+  uploadedByName?: string;
 }
 
 export interface Payment extends BaseRecord {

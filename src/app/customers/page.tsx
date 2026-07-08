@@ -18,6 +18,7 @@ import { getShopDocuments } from "@/lib/firebase/firestore";
 import { useAuth } from "@/contexts/AuthContext";
 import { Application } from "@/types";
 import { useEffect } from "react";
+import { formatDateTime } from "@/lib/utils";
 
 export default function CustomersPage() {
   const router = useRouter();
@@ -77,7 +78,7 @@ export default function CustomersPage() {
           </Button>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden text-slate-900 dark:text-slate-100">
           {loading ? (
             <div className="p-6"><TableSkeleton /></div>
           ) : filtered.length === 0 ? (
@@ -93,34 +94,38 @@ export default function CustomersPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-slate-100 bg-slate-50">
-                      <th className="text-left px-4 py-3 font-medium text-slate-600">Name</th>
-                      <th className="text-left px-4 py-3 font-medium text-slate-600">Mobile</th>
-                      <th className="text-left px-4 py-3 font-medium text-slate-600 hidden md:table-cell">Address</th>
-                      <th className="text-left px-4 py-3 font-medium text-slate-600">Applications</th>
-                      <th className="text-right px-4 py-3 font-medium text-slate-600">Actions</th>
+                    <tr className="border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60">
+                      <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Name</th>
+                      <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Mobile</th>
+                      <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300 hidden md:table-cell">Address</th>
+                      <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Applications</th>
+                      <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300 hidden lg:table-cell">Joined</th>
+                      <th className="text-right px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {paginatedItems.map((customer) => (
-                      <tr key={customer.id} className="border-b border-slate-50 hover:bg-slate-50">
-                        <td className="px-4 py-3 font-medium text-slate-900">{customer.fullName}</td>
-                        <td className="px-4 py-3 text-slate-600">{customer.mobile}</td>
-                        <td className="px-4 py-3 text-slate-600 hidden md:table-cell truncate max-w-[200px]">
+                      <tr key={customer.id} className="border-b border-slate-50 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                        <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">{customer.fullName}</td>
+                        <td className="px-4 py-3 text-slate-700 dark:text-slate-200">{customer.mobile}</td>
+                        <td className="px-4 py-3 text-slate-600 dark:text-slate-300 hidden md:table-cell truncate max-w-[200px]">
                           {customer.address}
                         </td>
                         <td className="px-4 py-3">
                           <Badge status="active" label={String(appCounts[customer.id] || 0)} />
                         </td>
+                        <td className="px-4 py-3 hidden lg:table-cell text-slate-600 dark:text-slate-300 whitespace-nowrap">
+                          {customer.createdAt ? formatDateTime(customer.createdAt) : "—"}
+                        </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center justify-end gap-1">
                             <Link href={`/customers/${customer.id}`}>
-                              <button className="p-1.5 rounded hover:bg-slate-100 text-slate-500">
+                              <button className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300">
                                 <Eye className="h-4 w-4" />
                               </button>
                             </Link>
                             <Link href={`/customers/${customer.id}?edit=true`}>
-                              <button className="p-1.5 rounded hover:bg-slate-100 text-slate-500">
+                              <button className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300">
                                 <Pencil className="h-4 w-4" />
                               </button>
                             </Link>
