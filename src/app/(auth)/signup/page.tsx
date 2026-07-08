@@ -21,8 +21,10 @@ function getSignupErrorMessage(err: unknown): string {
         return "Password is too weak. Use at least 6 characters.";
       case "auth/network-request-failed":
         return "Network error. Check your internet and try again.";
+      case "permission-denied":
+        return "Setup permission issue. Please try again after a few seconds.";
       default:
-        return "Signup failed. Please try again.";
+        return err.message || "Signup failed. Please try again.";
     }
   }
   if (err instanceof Error && err.message) return err.message;

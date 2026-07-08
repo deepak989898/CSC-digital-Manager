@@ -28,6 +28,10 @@ import { getActivePlans, createTrialSubscription } from "@/lib/subscription";
 
 const googleProvider = new GoogleAuthProvider();
 
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function findStaffInvite(email: string): Promise<(StaffMember & { id: string }) | null> {
   const db = getClientDb();
   try {
@@ -86,18 +90,33 @@ async function setupShopOwner(
   await setDoc(doc(db, "users", userId), userProfile);
   await setDoc(doc(db, "shops", userId), shop);
 
-  const batch = writeBatch(db);
-  DEFAULT_SERVICES.forEach((service) => {
-    const serviceRef = doc(collection(db, "services"));
-    batch.set(serviceRef, {
-      ...service,
-      userId,
-      shopId: userId,
-      createdAt: timestamp,
-      updatedAt: timestamp,
-    });
-  });
-  await batch.commit();
+  // Seed defaults without blocking account creation on transient rule timing.
+  try {
+    const seedServices = async () => {
+      const batch = writeBatch(db);
+      DEFAULT_SERVICES.forEach((service) => {
+        const serviceRef = doc(collection(db, "services"));
+        batch.set(serviceRef, {
+          ...service,
+          userId,
+          shopId: userId,
+          createdAt: timestamp,
+          updatedAt: timestamp,
+        });
+      });
+      await batch.commit();
+    };
+
+    try {
+      await seedServices();
+    } catch {
+      // Retry once after short delay if rules/cache are not ready yet.
+      await delay(350);
+      await seedServices();
+    }
+  } catch (err) {
+    console.error("Default services seed failed:", err);
+  }
 
   // Create free trial subscription
   try {
