@@ -191,6 +191,29 @@ async function bootstrapUserIfMissing(user: User): Promise<void> {
   }
 }
 
+function isPermissionDeniedError(err: unknown): boolean {
+  return err instanceof Error && /permission|insufficient permissions/i.test(err.message);
+}
+
+async function setupWithAuthPropagationRetry(
+  authUser: User,
+  action: () => Promise<void>
+): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      await action();
+      return;
+    } catch (err) {
+      lastError = err;
+      if (!isPermissionDeniedError(err) || attempt === 4) break;
+      await authUser.getIdToken(true);
+      await delay(600);
+    }
+  }
+  throw lastError;
+}
+
 export async function signUpWithEmail(
   email: string,
   password: string,
@@ -203,12 +226,14 @@ export async function signUpWithEmail(
 
   const userId = credential.user.uid;
   try {
-    const staffInvite = await findStaffInvite(email);
-    if (staffInvite) {
-      await setupStaffUser(userId, email, displayName, staffInvite);
-    } else {
-      await setupShopOwner(userId, email, displayName);
-    }
+    await setupWithAuthPropagationRetry(credential.user, async () => {
+      const staffInvite = await findStaffInvite(email);
+      if (staffInvite) {
+        await setupStaffUser(userId, email, displayName, staffInvite);
+      } else {
+        await setupShopOwner(userId, email, displayName);
+      }
+    });
   } catch (err) {
     // Roll back auth user to avoid "email already in use" after setup failure
     try {
@@ -226,7 +251,9 @@ export async function signInWithEmail(email: string, password: string): Promise<
   const auth = getClientAuth();
   const credential = await signInWithEmailAndPassword(auth, email, password);
   await credential.user.getIdToken(true);
-  await bootstrapUserIfMissing(credential.user);
+  await setupWithAuthPropagationRetry(credential.user, async () => {
+    await bootstrapUserIfMissing(credential.user);
+  });
   return credential.user;
 }
 
@@ -244,12 +271,14 @@ export async function signInWithGoogle(): Promise<User> {
     const displayName = credential.user.displayName || "User";
     await credential.user.getIdToken(true);
     try {
-      const staffInvite = await findStaffInvite(email);
-      if (staffInvite) {
-        await setupStaffUser(userId, email, displayName, staffInvite, credential.user.photoURL || undefined);
-      } else {
-        await setupShopOwner(userId, email, displayName, credential.user.photoURL || undefined);
-      }
+      await setupWithAuthPropagationRetry(credential.user, async () => {
+        const staffInvite = await findStaffInvite(email);
+        if (staffInvite) {
+          await setupStaffUser(userId, email, displayName, staffInvite, credential.user.photoURL || undefined);
+        } else {
+          await setupShopOwner(userId, email, displayName, credential.user.photoURL || undefined);
+        }
+      });
     } catch (err) {
       try {
         await deleteUser(credential.user);
@@ -259,7 +288,9 @@ export async function signInWithGoogle(): Promise<User> {
       throw err;
     }
   } else {
-    await bootstrapUserIfMissing(credential.user);
+    await setupWithAuthPropagationRetry(credential.user, async () => {
+      await bootstrapUserIfMissing(credential.user);
+    });
   }
 
   return credential.user;

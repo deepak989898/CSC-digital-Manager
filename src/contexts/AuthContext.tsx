@@ -36,13 +36,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const loadUserData = useCallback(async (firebaseUser: User) => {
-    const userProfile = await getUserProfile(firebaseUser.uid);
-    setProfile(userProfile);
-
-    if (userProfile && userProfile.role !== "super_admin") {
-      const shopData = await getShop(userProfile.shopId);
-      setShop(shopData);
-    } else {
+    try {
+      const userProfile = await getUserProfile(firebaseUser.uid);
+      setProfile(userProfile);
+      if (userProfile && userProfile.role !== "super_admin") {
+        const shopData = await getShop(userProfile.shopId);
+        setShop(shopData);
+      } else {
+        setShop(null);
+      }
+    } catch (err) {
+      console.error("Auth profile load failed:", err);
+      setProfile(null);
       setShop(null);
     }
   }, []);
