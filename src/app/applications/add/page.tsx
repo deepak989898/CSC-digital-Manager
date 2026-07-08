@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -12,6 +12,7 @@ import Select from "@/components/ui/Select";
 import Textarea from "@/components/ui/Textarea";
 import Button from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { TableSkeleton } from "@/components/ui/Skeleton";
 import { generateReferenceNumber } from "@/lib/utils";
 import { INDIAN_STATES } from "@/lib/constants";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -33,7 +34,7 @@ const emptyNewCustomer = {
   aadhaarLast4: "",
 };
 
-export default function AddApplicationPage() {
+function AddApplicationContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { profile } = useAuth();
@@ -408,5 +409,19 @@ export default function AddApplicationPage() {
         resource={showUpgrade || "Applications"}
       />
     </DashboardLayout>
+  );
+}
+
+export default function AddApplicationPage() {
+  return (
+    <Suspense
+      fallback={
+        <DashboardLayout title="New Application">
+          <TableSkeleton />
+        </DashboardLayout>
+      }
+    >
+      <AddApplicationContent />
+    </Suspense>
   );
 }

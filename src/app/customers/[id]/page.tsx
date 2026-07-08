@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { Suspense, useState, useEffect, useRef, useMemo } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -46,7 +46,7 @@ import {
 } from "lucide-react";
 import { logAudit } from "@/lib/audit";
 
-export default function CustomerDetailPage() {
+function CustomerDetailContent() {
   const { id } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const isEdit = searchParams.get("edit") === "true";
@@ -627,5 +627,19 @@ export default function CustomerDetailPage() {
         )}
       </div>
     </DashboardLayout>
+  );
+}
+
+export default function CustomerDetailPage() {
+  return (
+    <Suspense
+      fallback={
+        <DashboardLayout title="Customer Details">
+          <TableSkeleton />
+        </DashboardLayout>
+      }
+    >
+      <CustomerDetailContent />
+    </Suspense>
   );
 }
