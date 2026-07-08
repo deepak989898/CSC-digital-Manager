@@ -32,6 +32,19 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+async function withRetry<T>(fn: () => Promise<T>, attempts = 2, waitMs = 350): Promise<T> {
+  let lastError: unknown;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err;
+      if (i < attempts - 1) await delay(waitMs);
+    }
+  }
+  throw lastError;
+}
+
 async function findStaffInvite(email: string): Promise<(StaffMember & { id: string }) | null> {
   const db = getClientDb();
   try {
@@ -87,8 +100,10 @@ async function setupShopOwner(
     updatedAt: timestamp,
   };
 
-  await setDoc(doc(db, "users", userId), userProfile);
-  await setDoc(doc(db, "shops", userId), shop);
+  await withRetry(async () => {
+    await setDoc(doc(db, "users", userId), userProfile);
+    await setDoc(doc(db, "shops", userId), shop);
+  });
 
   // Seed defaults without blocking account creation on transient rule timing.
   try {
@@ -107,13 +122,7 @@ async function setupShopOwner(
       await batch.commit();
     };
 
-    try {
-      await seedServices();
-    } catch {
-      // Retry once after short delay if rules/cache are not ready yet.
-      await delay(350);
-      await seedServices();
-    }
+    await withRetry(seedServices);
   } catch (err) {
     console.error("Default services seed failed:", err);
   }
@@ -156,12 +165,30 @@ async function setupStaffUser(
     updatedAt: timestamp,
   };
 
-  await setDoc(doc(db, "users", userId), userProfile);
-  await updateDoc(doc(db, "staff", staff.id), {
-    linkedUserId: userId,
-    status: "active",
-    updatedAt: timestamp,
+  await withRetry(async () => {
+    await setDoc(doc(db, "users", userId), userProfile);
+    await updateDoc(doc(db, "staff", staff.id), {
+      linkedUserId: userId,
+      status: "active",
+      updatedAt: timestamp,
+    });
   });
+}
+
+async function bootstrapUserIfMissing(user: User): Promise<void> {
+  const db = getClientDb();
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+  if (snap.exists()) return;
+
+  const email = user.email || "";
+  const displayName = user.displayName || email.split("@")[0] || "User";
+  const staffInvite = await findStaffInvite(email);
+  if (staffInvite) {
+    await setupStaffUser(user.uid, email, displayName, staffInvite, user.photoURL || undefined);
+  } else {
+    await setupShopOwner(user.uid, email, displayName, user.photoURL || undefined);
+  }
 }
 
 export async function signUpWithEmail(
@@ -172,6 +199,7 @@ export async function signUpWithEmail(
   const auth = getClientAuth();
   const credential = await createUserWithEmailAndPassword(auth, email, password);
   await updateProfile(credential.user, { displayName });
+  await credential.user.getIdToken(true);
 
   const userId = credential.user.uid;
   try {
@@ -197,6 +225,8 @@ export async function signUpWithEmail(
 export async function signInWithEmail(email: string, password: string): Promise<User> {
   const auth = getClientAuth();
   const credential = await signInWithEmailAndPassword(auth, email, password);
+  await credential.user.getIdToken(true);
+  await bootstrapUserIfMissing(credential.user);
   return credential.user;
 }
 
@@ -212,13 +242,24 @@ export async function signInWithGoogle(): Promise<User> {
   if (!userSnap.exists()) {
     const email = credential.user.email || "";
     const displayName = credential.user.displayName || "User";
-    const staffInvite = await findStaffInvite(email);
-
-    if (staffInvite) {
-      await setupStaffUser(userId, email, displayName, staffInvite, credential.user.photoURL || undefined);
-    } else {
-      await setupShopOwner(userId, email, displayName, credential.user.photoURL || undefined);
+    await credential.user.getIdToken(true);
+    try {
+      const staffInvite = await findStaffInvite(email);
+      if (staffInvite) {
+        await setupStaffUser(userId, email, displayName, staffInvite, credential.user.photoURL || undefined);
+      } else {
+        await setupShopOwner(userId, email, displayName, credential.user.photoURL || undefined);
+      }
+    } catch (err) {
+      try {
+        await deleteUser(credential.user);
+      } catch {
+        // Ignore rollback failure
+      }
+      throw err;
     }
+  } else {
+    await bootstrapUserIfMissing(credential.user);
   }
 
   return credential.user;
