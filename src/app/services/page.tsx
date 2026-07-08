@@ -52,6 +52,7 @@ export default function ServicesPage() {
       toast.error("Service name is required");
       return;
     }
+    const shopId = profile.shopId || profile.userId;
     setSaving(true);
     try {
       const data = {
@@ -65,7 +66,7 @@ export default function ServicesPage() {
         status: editing?.status || "active" as const,
         isDefault: editing?.isDefault || false,
         userId: profile.userId,
-        shopId: profile.shopId,
+        shopId,
       };
       if (editing) {
         await update(editing.id, data);
@@ -75,8 +76,10 @@ export default function ServicesPage() {
         toast.success("Service added");
       }
       setModalOpen(false);
-    } catch {
-      toast.error("Failed to save service");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to save service";
+      toast.error(message);
     } finally {
       setSaving(false);
     }

@@ -64,6 +64,7 @@ export default function AddApplicationPage() {
       toast.error("Please select customer and service");
       return;
     }
+    const shopId = profile.shopId || profile.userId;
     if (!checkApplicationLimit()) { setShowUpgrade(true); return; }
     setLoading(true);
     try {
@@ -73,7 +74,7 @@ export default function AddApplicationPage() {
         toast.error("Selected customer or service not found. Please reselect.");
         return;
       }
-      const existingApps = await getShopDocuments("applications", profile.shopId);
+      const existingApps = await getShopDocuments("applications", shopId);
       const refNumber = generateReferenceNumber("APP", existingApps.length);
       const fee = Number(form.applicationFee) || 0;
       const paid = Number(form.amountPaid) || 0;
@@ -92,7 +93,7 @@ export default function AddApplicationPage() {
         notes: form.notes,
         dueDate: form.dueDate || undefined,
         userId: profile.userId,
-        shopId: profile.shopId,
+        shopId,
       });
 
       // Notification should not block core create flow

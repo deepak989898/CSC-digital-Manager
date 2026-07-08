@@ -43,6 +43,7 @@ export default function AddCustomerPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!profile) return;
+    const shopId = profile.shopId || profile.userId;
     if (!checkCustomerLimit()) { setShowUpgrade(true); return; }
     if (!form.fullName || !form.mobile || !form.address || !form.aadhaarLast4) {
       toast.error("Please fill in all required fields");
@@ -57,13 +58,13 @@ export default function AddCustomerPage() {
       await createDocument("customers", {
         ...form,
         userId: profile.userId,
-        shopId: profile.shopId,
+        shopId,
       });
 
       // Notification should not block customer creation success
       try {
         await notifyShopEvent(
-          profile.shopId,
+          shopId,
           profile.userId,
           "application_created",
           "New Customer",

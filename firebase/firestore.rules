@@ -33,7 +33,11 @@ service cloud.firestore {
     }
 
     function belongsToShop(shopId) {
-      return isAuthenticated() && (getUserShopId() == shopId || isSuperAdmin());
+      return isAuthenticated() && (
+        ownsShop(shopId) ||
+        getUserShopId() == shopId ||
+        isSuperAdmin()
+      );
     }
 
     function isActiveUser() {
@@ -57,7 +61,10 @@ service cloud.firestore {
 
     function validTenantRecord() {
       return request.resource.data.userId == request.auth.uid &&
-        request.resource.data.shopId == getUserShopId() &&
+        (
+          request.resource.data.shopId == getUserShopId() ||
+          request.resource.data.shopId == request.auth.uid
+        ) &&
         validTimestamps();
     }
 
