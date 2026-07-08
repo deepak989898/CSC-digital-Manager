@@ -25,41 +25,42 @@ export function Topbar({
 }: TopbarProps) {
   const { profile, shop } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const isSuperAdmin = profile?.role === "super_admin";
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-slate-200 px-4 lg:px-6 py-3">
+    <header className="sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 lg:px-6 py-3">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <button
             onClick={onMenuClick}
-            className="lg:hidden p-2 rounded-lg hover:bg-slate-100"
+            className="lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
           >
-            <Menu className="h-5 w-5 text-slate-600" />
+            <Menu className="h-5 w-5 text-slate-600 dark:text-slate-300" />
           </button>
-          <h1 className="text-lg font-semibold text-slate-900 truncate">{title}</h1>
+          <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100 truncate">{title}</h1>
         </div>
 
         <div className="flex items-center gap-3">
           {showSearch && onSearchChange ? (
-            <div className="hidden sm:flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5">
+            <div className="hidden sm:flex items-center gap-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5">
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchValue}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="bg-transparent text-sm outline-none w-40 lg:w-56"
+                className="bg-transparent text-sm text-slate-900 dark:text-slate-100 outline-none w-40 lg:w-56 placeholder:text-slate-400"
               />
             </div>
           ) : (
-            profile?.role !== "super_admin" && <GlobalSearch />
+            !isSuperAdmin && <GlobalSearch />
           )}
 
-          {profile?.role !== "super_admin" && <NotificationBell />}
+          {!isSuperAdmin && <NotificationBell />}
 
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100"
+              className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               <div className="h-8 w-8 rounded-full bg-brand-blue flex items-center justify-center text-white text-sm font-medium overflow-hidden">
                 {shop?.photoURL || profile?.photoURL ? (
@@ -75,10 +76,12 @@ export function Topbar({
                 )}
               </div>
               <div className="hidden md:block text-left">
-                <p className="text-sm font-medium text-slate-900 leading-tight">
-                  {shop?.ownerName || profile?.displayName}
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-100 leading-tight">
+                  {isSuperAdmin ? profile?.displayName : (shop?.ownerName || profile?.displayName)}
                 </p>
-                <p className="text-xs text-slate-500">{shop?.shopName || "My Shop"}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {isSuperAdmin ? "Super Admin" : (shop?.shopName || "My Shop")}
+                </p>
               </div>
               <ChevronDown className="h-4 w-4 text-slate-400 hidden md:block" />
             </button>
@@ -86,14 +89,16 @@ export function Topbar({
             {dropdownOpen && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />
-                <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-200 py-1 z-50">
-                  <Link
-                    href="/settings/profile"
-                    className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    Profile Settings
-                  </Link>
+                <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 py-1 z-50">
+                  {!isSuperAdmin && (
+                    <Link
+                      href="/settings/profile"
+                      className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      Profile Settings
+                    </Link>
+                  )}
                 </div>
               </>
             )}

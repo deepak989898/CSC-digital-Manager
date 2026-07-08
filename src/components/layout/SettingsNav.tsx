@@ -30,7 +30,7 @@ export function SettingsNav() {
               "inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
               isActive
                 ? "bg-brand-blue text-white"
-                : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
             )}
           >
             <link.icon className="h-4 w-4" />

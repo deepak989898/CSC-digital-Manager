@@ -47,8 +47,9 @@ export default function AppSettingsPage() {
         <Card title="Appearance">
           <div className="flex gap-3">
             {[{ value: "light" as const, icon: Sun, label: "Light" }, { value: "dark" as const, icon: Moon, label: "Dark" }, { value: "system" as const, icon: Monitor, label: "System" }].map((t) => (
-              <button key={t.value} onClick={() => setTheme(t.value)} className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors ${theme === t.value ? "border-brand-blue bg-brand-blue/5" : "border-slate-200 dark:border-slate-700"}`}>
-                <t.icon className="h-6 w-6" /><span className="text-sm">{t.label}</span>
+              <button key={t.value} onClick={() => setTheme(t.value)} className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors ${theme === t.value ? "border-brand-blue bg-brand-blue/10 dark:bg-brand-blue/20" : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800"}`}>
+                <t.icon className="h-6 w-6 text-slate-700 dark:text-slate-200" />
+                <span className="text-sm font-medium text-slate-800 dark:text-slate-200">{t.label}</span>
               </button>
             ))}
           </div>

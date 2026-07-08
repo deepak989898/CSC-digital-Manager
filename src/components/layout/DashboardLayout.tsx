@@ -34,36 +34,47 @@ export function DashboardLayout({
 
   useEffect(() => {
     if (!loading && profile) {
-      if (!profile.isActive) {
+      if (profile.isActive === false) {
         router.push("/login");
         return;
       }
+
       const isAdminRoute = pathname.startsWith("/admin");
-      if (profile.role === "super_admin" && !isAdminRoute && pathname === "/dashboard") {
-        router.push("/admin/dashboard");
+
+      // Super admin always uses admin panel
+      if (profile.role === "super_admin" && !isAdminRoute) {
+        router.replace("/admin/dashboard");
+        return;
       }
+
       if (profile.role === "shop_owner" && isAdminRoute) {
-        router.push("/dashboard");
+        router.replace("/dashboard");
+        return;
       }
+
       if (isStaffRole(profile.role) && isAdminRoute) {
-        router.push("/dashboard");
+        router.replace("/dashboard");
+        return;
       }
+
       if (
         profile.role === "shop_owner" &&
         !profile.profileComplete &&
         !pathname.startsWith("/settings")
       ) {
-        router.push("/settings/profile");
+        router.replace("/settings/profile");
+        return;
       }
+
       if (isStaffRole(profile.role) && !canAccessRoute(profile, pathname)) {
-        router.push("/dashboard");
+        router.replace("/dashboard");
       }
     }
   }, [loading, profile, pathname, router]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 p-6">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6">
         <PageSkeleton />
       </div>
     );
@@ -72,7 +83,7 @@ export function DashboardLayout({
   if (!user || !profile) return null;
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex-1 flex flex-col min-w-0">
         <Topbar
@@ -82,7 +93,7 @@ export function DashboardLayout({
           searchValue={searchValue}
           onSearchChange={onSearchChange}
         />
-        <main className="flex-1 p-4 lg:p-6 overflow-auto">{children}</main>
+        <main className="flex-1 p-4 lg:p-6 overflow-auto text-slate-900 dark:text-slate-100">{children}</main>
       </div>
     </div>
   );

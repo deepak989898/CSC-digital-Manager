@@ -38,9 +38,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadUserData = useCallback(async (firebaseUser: User) => {
     const userProfile = await getUserProfile(firebaseUser.uid);
     setProfile(userProfile);
-    if (userProfile) {
+
+    if (userProfile && userProfile.role !== "super_admin") {
       const shopData = await getShop(userProfile.shopId);
       setShop(shopData);
+    } else {
+      setShop(null);
     }
   }, []);
 

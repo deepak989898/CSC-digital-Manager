@@ -52,7 +52,7 @@ const CHART_COLORS = ["#f97316", "#2563eb", "#8b5cf6", "#22c55e", "#ef4444"];
 
 export default function DashboardPage() {
   const { profile } = useAuth();
-  const { stats, smart, recentApplications, topServices, loading } = useDashboardStats();
+  const { stats, smart, recentApplications, topServices, loading, smartLoading } = useDashboardStats();
   const { subscription, plan, usage, loading: subLoading } = useSubscription();
   const { reminders: upcomingReminders } = useReminders(true);
   const [recentPayments, setRecentPayments] = useState<Payment[]>([]);
@@ -64,7 +64,7 @@ export default function DashboardPage() {
 
   if (loading || !stats) {
     return (
-      <DashboardLayout title="Dashboard">
+      <DashboardLayout title="Smart Dashboard">
         <PageSkeleton />
       </DashboardLayout>
     );
@@ -90,19 +90,29 @@ export default function DashboardPage() {
             { href: "/tickets", label: "New Ticket", icon: Clock },
             { href: "/reports/advanced", label: "View Reports", icon: TrendingUp },
           ].map((action) => (
-            <Link key={action.href} href={action.href} className="flex flex-col items-center gap-2 p-3 rounded-xl border bg-white dark:bg-slate-800 hover:shadow-md transition-shadow text-center">
+            <Link key={action.href} href={action.href} className="flex flex-col items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:shadow-md transition-shadow text-center">
               <action.icon className="h-5 w-5 text-brand-blue" />
-              <span className="text-xs font-medium">{action.label}</span>
+              <span className="text-xs font-medium text-slate-800 dark:text-slate-200">{action.label}</span>
             </Link>
           ))}
         </div>
 
-        {smart && (
+        {(smart || smartLoading) && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {smartLoading && !smart ? (
+              <>
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="h-24 rounded-xl bg-slate-200 dark:bg-slate-800 animate-pulse" />
+                ))}
+              </>
+            ) : smart ? (
+              <>
             <StatCard title="Monthly Revenue" value={formatCurrency(smart.monthlyEarnings)} icon={<IndianRupee className="h-5 w-5" />} color="green" trend={smart.lastMonthEarnings > 0 ? `${Math.round(((smart.monthlyEarnings - smart.lastMonthEarnings) / smart.lastMonthEarnings) * 100)}% vs last month` : undefined} />
             <StatCard title="Monthly Profit" value={formatCurrency(smart.profit)} icon={<TrendingUp className="h-5 w-5" />} color="blue" />
             <StatCard title="Today's Applications" value={smart.todayApplications} icon={<Plus className="h-5 w-5" />} color="purple" />
             <StatCard title="Customer Growth" value={`${smart.customerGrowthPercent}%`} icon={smart.customerGrowthPercent >= 0 ? <ArrowUpRight className="h-5 w-5" /> : <ArrowDownRight className="h-5 w-5" />} color={smart.customerGrowthPercent >= 0 ? "green" : "red"} />
+              </>
+            ) : null}
           </div>
         )}
 
