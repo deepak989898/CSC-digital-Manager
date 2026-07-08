@@ -6,6 +6,7 @@ import {
   signOut,
   sendPasswordResetEmail,
   updateProfile,
+  deleteUser,
   User,
 } from "firebase/auth";
 import {
@@ -29,14 +30,19 @@ const googleProvider = new GoogleAuthProvider();
 
 async function findStaffInvite(email: string): Promise<(StaffMember & { id: string }) | null> {
   const db = getClientDb();
-  const q = query(collection(db, "staff"), where("email", "==", email.toLowerCase()));
-  const snap = await getDocs(q);
-  const invite = snap.docs.find((d) => {
-    const data = d.data();
-    return data.status === "invited" || data.status === "active";
-  });
-  if (!invite) return null;
-  return { id: invite.id, ...invite.data() } as StaffMember & { id: string };
+  try {
+    const q = query(collection(db, "staff"), where("email", "==", email.toLowerCase()));
+    const snap = await getDocs(q);
+    const invite = snap.docs.find((d) => {
+      const data = d.data();
+      return data.status === "invited" || data.status === "active";
+    });
+    if (!invite) return null;
+    return { id: invite.id, ...invite.data() } as StaffMember & { id: string };
+  } catch {
+    // New users may not have permission to read staff invites yet.
+    return null;
+  }
 }
 
 async function setupShopOwner(
@@ -145,17 +151,25 @@ export async function signUpWithEmail(
   displayName: string
 ): Promise<User> {
   const auth = getClientAuth();
-  const db = getClientDb();
   const credential = await createUserWithEmailAndPassword(auth, email, password);
   await updateProfile(credential.user, { displayName });
 
   const userId = credential.user.uid;
-  const staffInvite = await findStaffInvite(email);
-
-  if (staffInvite) {
-    await setupStaffUser(userId, email, displayName, staffInvite);
-  } else {
-    await setupShopOwner(userId, email, displayName);
+  try {
+    const staffInvite = await findStaffInvite(email);
+    if (staffInvite) {
+      await setupStaffUser(userId, email, displayName, staffInvite);
+    } else {
+      await setupShopOwner(userId, email, displayName);
+    }
+  } catch (err) {
+    // Roll back auth user to avoid "email already in use" after setup failure
+    try {
+      await deleteUser(credential.user);
+    } catch {
+      // Ignore rollback error
+    }
+    throw err;
   }
 
   return credential.user;

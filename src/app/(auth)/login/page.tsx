@@ -70,13 +70,15 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
-            <Image
-              src="/logo.png"
-              alt="CSC Digital Manager"
-              width={72}
-              height={72}
-              className="mx-auto rounded-xl mb-4"
-            />
+            <Link href="/" className="inline-block">
+              <Image
+                src="/logo.png"
+                alt="CSC Digital Manager"
+                width={72}
+                height={72}
+                className="mx-auto rounded-xl mb-4"
+              />
+            </Link>
             <h1 className="text-2xl font-bold text-slate-900">CSC Digital Manager</h1>
             <p className="text-sm text-slate-500 mt-1">Sign in to your account</p>
           </div>

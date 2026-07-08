@@ -8,6 +8,26 @@ import { signUpWithEmail, signInWithGoogle } from "@/lib/firebase/auth";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { toast } from "sonner";
+import { FirebaseError } from "firebase/app";
+
+function getSignupErrorMessage(err: unknown): string {
+  if (err instanceof FirebaseError) {
+    switch (err.code) {
+      case "auth/email-already-in-use":
+        return "This email is already registered. Please sign in or use Forgot Password.";
+      case "auth/invalid-email":
+        return "Please enter a valid email address.";
+      case "auth/weak-password":
+        return "Password is too weak. Use at least 6 characters.";
+      case "auth/network-request-failed":
+        return "Network error. Check your internet and try again.";
+      default:
+        return "Signup failed. Please try again.";
+    }
+  }
+  if (err instanceof Error && err.message) return err.message;
+  return "Signup failed. Please try again.";
+}
 
 export default function SignupPage() {
   const router = useRouter();
@@ -43,8 +63,7 @@ export default function SignupPage() {
       toast.success("Account created successfully");
       router.push("/settings/profile");
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Signup failed";
-      toast.error(message);
+      toast.error(getSignupErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -57,8 +76,7 @@ export default function SignupPage() {
       toast.success("Account created successfully");
       router.push("/settings/profile");
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Google signup failed";
-      toast.error(message);
+      toast.error(getSignupErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -69,13 +87,15 @@ export default function SignupPage() {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
-            <Image
-              src="/logo.png"
-              alt="CSC Digital Manager"
-              width={72}
-              height={72}
-              className="mx-auto rounded-xl mb-4"
-            />
+            <Link href="/" className="inline-block">
+              <Image
+                src="/logo.png"
+                alt="CSC Digital Manager"
+                width={72}
+                height={72}
+                className="mx-auto rounded-xl mb-4"
+              />
+            </Link>
             <h1 className="text-2xl font-bold text-slate-900">Create Account</h1>
             <p className="text-sm text-slate-500 mt-1">Register your CSC shop</p>
           </div>
