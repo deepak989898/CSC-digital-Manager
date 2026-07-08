@@ -53,7 +53,7 @@ export default function AdminShopsPage() {
 
   return (
     <DashboardLayout title="All Shops" showSearch searchValue={search} onSearchChange={setSearch}>
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         {loading ? (
           <div className="p-6"><TableSkeleton /></div>
         ) : (
@@ -61,31 +61,31 @@ export default function AdminShopsPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50">
-                    <th className="text-left px-4 py-3 font-medium text-slate-600">Shop Name</th>
-                    <th className="text-left px-4 py-3 font-medium text-slate-600">Owner</th>
-                    <th className="text-left px-4 py-3 font-medium text-slate-600">Mobile</th>
-                    <th className="text-left px-4 py-3 font-medium text-slate-600">City</th>
-                    <th className="text-left px-4 py-3 font-medium text-slate-600">Status</th>
-                    <th className="text-left px-4 py-3 font-medium text-slate-600 hidden md:table-cell">Joined</th>
-                    <th className="text-right px-4 py-3 font-medium text-slate-600">Actions</th>
+                  <tr className="border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                    <th className="text-left px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Shop Name</th>
+                    <th className="text-left px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Owner</th>
+                    <th className="text-left px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Mobile</th>
+                    <th className="text-left px-4 py-3 font-medium text-slate-700 dark:text-slate-300">City</th>
+                    <th className="text-left px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Status</th>
+                    <th className="text-left px-4 py-3 font-medium text-slate-700 dark:text-slate-300 hidden md:table-cell">Joined</th>
+                    <th className="text-right px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginatedItems.map((shop) => (
-                    <tr key={shop.id} className="border-b border-slate-50 hover:bg-slate-50">
-                      <td className="px-4 py-3 font-medium">{shop.shopName || "—"}</td>
-                      <td className="px-4 py-3">{shop.ownerName}</td>
-                      <td className="px-4 py-3">{shop.mobile || "—"}</td>
-                      <td className="px-4 py-3">{shop.city || "—"}</td>
+                    <tr key={shop.id} className="border-b border-slate-50 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">
+                      <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">{shop.shopName || "—"}</td>
+                      <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{shop.ownerName}</td>
+                      <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{shop.mobile || "—"}</td>
+                      <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{shop.city || "—"}</td>
                       <td className="px-4 py-3">
                         <Badge status={shop.isActive ? "active" : "inactive"} />
                       </td>
-                      <td className="px-4 py-3 hidden md:table-cell text-slate-500">{formatDate(shop.createdAt)}</td>
+                      <td className="px-4 py-3 hidden md:table-cell text-slate-500 dark:text-slate-400">{formatDate(shop.createdAt)}</td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex justify-end gap-1">
-                          <button onClick={() => setSelectedShop(shop)} className="p-1.5 rounded hover:bg-slate-100">
-                            <Eye className="h-4 w-4" />
+                          <button onClick={() => setSelectedShop(shop)} className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700">
+                            <Eye className="h-4 w-4 text-slate-700 dark:text-slate-300" />
                           </button>
                           <Button variant="ghost" size="sm" onClick={() => toggleShop(shop)}>
                             {shop.isActive ? <ToggleRight className="h-4 w-4 text-green-500" /> : <ToggleLeft className="h-4 w-4" />}

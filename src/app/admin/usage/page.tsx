@@ -7,7 +7,6 @@ import { getShopUsageCounts } from "@/lib/subscription";
 import { getShopSubscription } from "@/lib/subscription";
 import { Shop } from "@/types";
 import { Badge } from "@/components/ui/Badge";
-import { formatLimit } from "@/lib/permissions";
 
 interface ShopUsage {
   shop: Shop;
@@ -38,29 +37,29 @@ export default function AdminUsagePage() {
 
   return (
     <DashboardLayout title="Usage by Shop">
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
-        {loading ? <div className="p-8 text-center text-slate-500">Loading usage data...</div> : (
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto">
+        {loading ? <div className="p-8 text-center text-slate-500 dark:text-slate-400">Loading usage data...</div> : (
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50">
-                <th className="text-left px-4 py-3 font-medium text-slate-600">Shop</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">Plan</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">Customers</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">Applications</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">Storage MB</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">Staff</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">Status</th>
+              <tr className="border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                <th className="text-left px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Shop</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Plan</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Customers</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Applications</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Storage MB</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Staff</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Status</th>
               </tr>
             </thead>
             <tbody>
               {data.map(({ shop, usage, planName }) => (
-                <tr key={shop.id} className="border-b border-slate-50 hover:bg-slate-50">
-                  <td className="px-4 py-3 font-medium">{shop.shopName || shop.ownerName}</td>
-                  <td className="px-4 py-3">{planName}</td>
-                  <td className="px-4 py-3">{usage.customers}</td>
-                  <td className="px-4 py-3">{usage.applications}</td>
-                  <td className="px-4 py-3">{usage.storageMB}</td>
-                  <td className="px-4 py-3">{usage.staff}</td>
+                <tr key={shop.id} className="border-b border-slate-50 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">
+                  <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">{shop.shopName || shop.ownerName}</td>
+                  <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{planName}</td>
+                  <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{usage.customers}</td>
+                  <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{usage.applications}</td>
+                  <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{usage.storageMB}</td>
+                  <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{usage.staff}</td>
                   <td className="px-4 py-3"><Badge status={shop.isActive ? "active" : "inactive"} /></td>
                 </tr>
               ))}

@@ -78,11 +78,11 @@ export default function AdminPlansPage() {
           {plans.map((plan) => (
             <Card key={plan.id}>
               <div className="flex justify-between items-start mb-2">
-                <h3 className="font-bold text-lg">{plan.name}</h3>
+                <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100">{plan.name}</h3>
                 <Badge status={plan.status} />
               </div>
-              <p className="text-2xl font-bold text-brand-blue">{formatCurrency(plan.monthlyPrice)}<span className="text-sm font-normal text-slate-500">/mo</span></p>
-              <p className="text-sm text-slate-500 mt-1">{plan.customerLimit < 0 ? "Unlimited" : plan.customerLimit} customers · {plan.staffLimit} staff</p>
+              <p className="text-2xl font-bold text-brand-blue">{formatCurrency(plan.monthlyPrice)}<span className="text-sm font-normal text-slate-500 dark:text-slate-400">/mo</span></p>
+              <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">{plan.customerLimit < 0 ? "Unlimited" : plan.customerLimit} customers · {plan.staffLimit} staff</p>
               <div className="flex gap-2 mt-4">
                 <Button variant="ghost" size="sm" onClick={() => openEdit(plan)}><Pencil className="h-4 w-4" /></Button>
                 <Button variant="ghost" size="sm" onClick={() => handleDelete(plan.id)}><Trash2 className="h-4 w-4 text-red-500" /></Button>
