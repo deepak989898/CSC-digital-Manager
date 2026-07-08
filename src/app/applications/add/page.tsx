@@ -67,8 +67,12 @@ export default function AddApplicationPage() {
     if (!checkApplicationLimit()) { setShowUpgrade(true); return; }
     setLoading(true);
     try {
-      const customer = customers.find((c) => c.id === form.customerId)!;
-      const service = services.find((s) => s.id === form.serviceId)!;
+      const customer = customers.find((c) => c.id === form.customerId);
+      const service = services.find((s) => s.id === form.serviceId);
+      if (!customer || !service) {
+        toast.error("Selected customer or service not found. Please reselect.");
+        return;
+      }
       const existingApps = await getShopDocuments("applications", profile.shopId);
       const refNumber = generateReferenceNumber("APP", existingApps.length);
       const fee = Number(form.applicationFee) || 0;
@@ -90,11 +94,27 @@ export default function AddApplicationPage() {
         userId: profile.userId,
         shopId: profile.shopId,
       });
-      await notifyShopEvent(profile.shopId, profile.userId, "application_created", "New Application", `${refNumber} created for ${customer.fullName}`, `/applications`);
+
+      // Notification should not block core create flow
+      try {
+        await notifyShopEvent(
+          profile.shopId,
+          profile.userId,
+          "application_created",
+          "New Application",
+          `${refNumber} created for ${customer.fullName}`,
+          "/applications"
+        );
+      } catch {
+        // Ignore notification failure
+      }
+
       toast.success("Application created");
       router.push("/applications");
-    } catch {
-      toast.error("Failed to create application");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to create application";
+      toast.error(message);
     } finally {
       setLoading(false);
     }

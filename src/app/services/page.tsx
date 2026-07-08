@@ -122,31 +122,31 @@ export default function ServicesPage() {
             {services.map((service) => (
               <Card key={service.id} className="relative">
                 <div className="flex items-start justify-between mb-3">
-                  <div className="p-2 bg-blue-50 rounded-lg">
+                  <div className="p-2 bg-blue-50 dark:bg-blue-950 rounded-lg">
                     <Briefcase className="h-5 w-5 text-brand-blue" />
                   </div>
                   <Badge status={service.status} />
                 </div>
-                <h3 className="font-semibold text-slate-900">{service.name}</h3>
-                <p className="text-sm text-slate-500 mt-1 line-clamp-2">{service.description}</p>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100">{service.name}</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 line-clamp-2">{service.description}</p>
                 <p className="text-lg font-bold text-brand-blue mt-2">
                   {formatCurrency(service.defaultPrice)}
                 </p>
                 {service.requiredDocuments.length > 0 && (
-                  <p className="text-xs text-slate-400 mt-2">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
                     Docs: {service.requiredDocuments.join(", ")}
                   </p>
                 )}
-                <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-100">
-                  <Button variant="ghost" size="sm" onClick={() => openEdit(service)}>
+                <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-100 dark:border-slate-700">
+                  <Button variant="ghost" size="sm" onClick={() => openEdit(service)} className="text-slate-700 dark:text-slate-200">
                     <Pencil className="h-4 w-4" />
                     Edit
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={() => toggleStatus(service)}>
+                  <Button variant="ghost" size="sm" onClick={() => toggleStatus(service)} className="text-slate-700 dark:text-slate-200">
                     {service.status === "active" ? (
                       <ToggleRight className="h-4 w-4 text-green-500" />
                     ) : (
-                      <ToggleLeft className="h-4 w-4 text-slate-400" />
+                      <ToggleLeft className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                     )}
                     {service.status === "active" ? "Disable" : "Enable"}
                   </Button>

@@ -22,8 +22,8 @@ export function Pagination({
   if (totalPages <= 1) return null;
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
-      <p className="text-sm text-slate-500">
+    <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-700">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
         {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}
       </p>
@@ -36,7 +36,7 @@ export function Pagination({
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <span className="text-sm text-slate-600">
+        <span className="text-sm text-slate-600 dark:text-slate-300">
           Page {currentPage} of {totalPages}
         </span>
         <Button

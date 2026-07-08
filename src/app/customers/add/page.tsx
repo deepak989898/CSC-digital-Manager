@@ -59,11 +59,26 @@ export default function AddCustomerPage() {
         userId: profile.userId,
         shopId: profile.shopId,
       });
-      await notifyShopEvent(profile.shopId, profile.userId, "application_created", "New Customer", `${form.fullName} was added`);
+
+      // Notification should not block customer creation success
+      try {
+        await notifyShopEvent(
+          profile.shopId,
+          profile.userId,
+          "application_created",
+          "New Customer",
+          `${form.fullName} was added`
+        );
+      } catch {
+        // Ignore notification failures
+      }
+
       toast.success("Customer added successfully");
       router.push("/customers");
-    } catch {
-      toast.error("Failed to add customer");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to add customer";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
