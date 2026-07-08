@@ -262,6 +262,7 @@ export async function signInWithGoogle(): Promise<User> {
   const db = getClientDb();
   const credential = await signInWithPopup(auth, googleProvider);
   const userId = credential.user.uid;
+  await credential.user.getIdToken(true);
 
   const userRef = doc(db, "users", userId);
   const userSnap = await getDoc(userRef);
@@ -269,7 +270,6 @@ export async function signInWithGoogle(): Promise<User> {
   if (!userSnap.exists()) {
     const email = credential.user.email || "";
     const displayName = credential.user.displayName || "User";
-    await credential.user.getIdToken(true);
     try {
       await setupWithAuthPropagationRetry(credential.user, async () => {
         const staffInvite = await findStaffInvite(email);

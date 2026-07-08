@@ -1,22 +1,37 @@
 rules_version = '2';
 
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
   match /b/{bucket}/o {
 
-    // This rule allows anyone with your Storage bucket reference to view, edit,
-    // and delete all data in your Storage bucket. It is useful for getting
-    // started, but it is configured to expire after 30 days because it
-    // leaves your app open to attackers. At that time, all client
-    // requests to your Storage bucket will be denied.
-    //
-    // Make sure to write security rules for your app before that time, or else
-    // all client requests to your Storage bucket will be denied until you Update
-    // your rules
-    match /{allPaths=**} {
-      allow read, write: if request.time < timestamp.date(2026, 5, 15);
+    function userDoc() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isSuperAdmin() {
+      return request.auth != null && userDoc().role == 'super_admin';
+    }
+
+    function belongsToShop(shopId) {
+      return request.auth != null && userDoc().shopId == shopId;
+    }
+
+    function ownsShop(shopId) {
+      return request.auth != null && request.auth.uid == shopId;
+    }
+
+    function canAccessShop(shopId) {
+      return ownsShop(shopId) || belongsToShop(shopId) || isSuperAdmin();
+    }
+
+    function isValidFile() {
+      return request.resource.size < 5 * 1024 * 1024 &&
+        request.resource.contentType.matches('image/.*|application/pdf');
+    }
+
+    match /shops/{shopId}/{allPaths=**} {
+      allow read: if canAccessShop(shopId);
+      allow write: if canAccessShop(shopId) && isValidFile();
+      allow delete: if canAccessShop(shopId);
     }
   }
 }

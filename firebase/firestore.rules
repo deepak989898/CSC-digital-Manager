@@ -7,20 +7,24 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function userExists() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
     function userDoc() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
 
     function isSuperAdmin() {
-      return isAuthenticated() && userDoc().role == 'super_admin';
+      return isAuthenticated() && userExists() && userDoc().role == 'super_admin';
     }
 
     function isShopOwner() {
-      return isAuthenticated() && userDoc().role == 'shop_owner';
+      return isAuthenticated() && userExists() && userDoc().role == 'shop_owner';
     }
 
     function isStaffMember() {
-      return isAuthenticated() &&
+      return isAuthenticated() && userExists() &&
         userDoc().role in ['manager', 'operator', 'accountant'];
     }
 
@@ -35,13 +39,13 @@ service cloud.firestore {
     function belongsToShop(shopId) {
       return isAuthenticated() && (
         ownsShop(shopId) ||
-        getUserShopId() == shopId ||
+        (userExists() && getUserShopId() == shopId) ||
         isSuperAdmin()
       );
     }
 
     function isActiveUser() {
-      return isAuthenticated() && userDoc().isActive == true;
+      return isAuthenticated() && userExists() && userDoc().isActive == true;
     }
 
     function shopIsActive(shopId) {
@@ -53,16 +57,10 @@ service cloud.firestore {
         request.resource.data.updatedAt is string;
     }
 
-    function validOwnerRecord() {
-      return request.resource.data.userId == request.auth.uid &&
-        request.resource.data.shopId == request.auth.uid &&
-        validTimestamps();
-    }
-
     function validTenantRecord() {
       return request.resource.data.userId == request.auth.uid &&
         (
-          request.resource.data.shopId == getUserShopId() ||
+          (userExists() && request.resource.data.shopId == getUserShopId()) ||
           request.resource.data.shopId == request.auth.uid
         ) &&
         validTimestamps();
@@ -168,7 +166,7 @@ service cloud.firestore {
       allow update, delete: if isSuperAdmin();
     }
 
-    // Shop-scoped Phase 1 collections
+    // Shop-scoped collections
     match /customers/{docId} {
       allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
       allow create: if canCreateForShop() && shopIsActive(request.resource.data.shopId);
@@ -211,7 +209,6 @@ service cloud.firestore {
       allow delete: if isSuperAdmin();
     }
 
-    // Phase 3 shop-scoped collections
     match /expenses/{docId} {
       allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
       allow create: if canCreateForShop();
