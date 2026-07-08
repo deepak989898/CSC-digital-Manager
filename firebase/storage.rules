@@ -1,0 +1,37 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function userDoc() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isSuperAdmin() {
+      return request.auth != null && userDoc().role == 'super_admin';
+    }
+
+    function belongsToShop(shopId) {
+      return request.auth != null && userDoc().shopId == shopId;
+    }
+
+    function ownsShop(shopId) {
+      return request.auth != null && request.auth.uid == shopId;
+    }
+
+    function canAccessShop(shopId) {
+      return ownsShop(shopId) || belongsToShop(shopId) || isSuperAdmin();
+    }
+
+    function isValidFile() {
+      return request.resource.size < 5 * 1024 * 1024 &&
+        request.resource.contentType.matches('image/.*|application/pdf');
+    }
+
+    match /shops/{shopId}/{allPaths=**} {
+      allow read: if canAccessShop(shopId);
+      allow write: if canAccessShop(shopId) && isValidFile();
+      allow delete: if canAccessShop(shopId);
+    }
+  }
+}
