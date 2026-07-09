@@ -28,6 +28,7 @@ import {
   DOCUMENT_TYPES,
 } from "@/lib/constants";
 import { formatCurrency, formatDate, formatDateTime } from "@/lib/utils";
+import { downloadFileFromUrl } from "@/lib/download";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -211,6 +212,17 @@ function CustomerDetailContent() {
     }
   };
 
+  const deleteNote = async (activityId: string) => {
+    if (!confirm("Delete this note?")) return;
+    try {
+      await deleteDocument("crmActivities", activityId);
+      toast.success("Note deleted");
+      await loadData();
+    } catch {
+      toast.error("Failed to delete note");
+    }
+  };
+
   const handleDocUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !customer || !profile) return;
@@ -235,7 +247,7 @@ function CustomerDetailContent() {
         fileURL: url,
         fileSize: file.size,
         mimeType: file.type,
-        verificationStatus: "pending",
+        verificationStatus: "uploaded",
         uploadedByName: profile.displayName,
         userId: profile.userId,
         shopId,
@@ -252,6 +264,15 @@ function CustomerDetailContent() {
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";
+    }
+  };
+
+  const handleDownloadDoc = async (doc: DocumentRecord) => {
+    try {
+      await downloadFileFromUrl(doc.fileURL, doc.fileName || doc.name);
+      toast.success("Download started");
+    } catch {
+      toast.error("Download failed");
     }
   };
 
@@ -273,6 +294,7 @@ function CustomerDetailContent() {
       title: a.title,
       description: a.description,
       time: a.createdAt,
+      canDelete: a.type === "note",
     })),
     ...applications.map((a) => ({
       id: a.id,
@@ -280,6 +302,7 @@ function CustomerDetailContent() {
       title: `Application ${a.referenceNumber}`,
       description: `${a.serviceName} — ${a.status}`,
       time: a.createdAt,
+      canDelete: false,
     })),
     ...payments.map((p) => ({
       id: p.id,
@@ -287,6 +310,7 @@ function CustomerDetailContent() {
       title: `Payment ${formatCurrency(p.amount)}`,
       description: `${p.serviceName} — ${p.paymentStatus}`,
       time: p.paymentDate,
+      canDelete: false,
     })),
   ].sort((a, b) => b.time.localeCompare(a.time));
 
@@ -378,13 +402,32 @@ function CustomerDetailContent() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                  <Badge status={d.verificationStatus || "pending"} />
+                  <Badge
+                    status={
+                      d.verificationStatus === "rejected"
+                        ? "rejected"
+                        : d.verificationStatus === "verified"
+                          ? "verified"
+                          : "uploaded"
+                    }
+                    label={
+                      d.verificationStatus === "rejected"
+                        ? "Rejected"
+                        : d.verificationStatus === "verified"
+                          ? "Verified"
+                          : "Uploaded"
+                    }
+                  />
                   <a href={d.fileURL} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700">
                     <Eye className="h-4 w-4" />
                   </a>
-                  <a href={d.fileURL} download className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700">
+                  <button
+                    type="button"
+                    onClick={() => handleDownloadDoc(d)}
+                    className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700"
+                  >
                     <Download className="h-4 w-4" />
-                  </a>
+                  </button>
                   <button
                     type="button"
                     onClick={() => handleDeleteDoc(d)}
@@ -610,13 +653,23 @@ function CustomerDetailContent() {
                 ) : (
                   <div className="space-y-3 max-h-80 overflow-y-auto">
                     {timeline.map((item) => (
-                      <div key={item.id} className="flex gap-3 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
+                      <div key={`${item.type}-${item.id}`} className="flex gap-3 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
                         <div className="w-2 h-2 mt-2 rounded-full bg-brand-blue shrink-0" />
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium">{item.title}</p>
-                          <p className="text-xs text-slate-500">{item.description}</p>
+                          <p className="text-xs text-slate-500 break-words">{item.description}</p>
                           <p className="text-xs text-slate-400 mt-1">{formatDateTime(item.time)}</p>
                         </div>
+                        {item.canDelete && (
+                          <button
+                            type="button"
+                            onClick={() => deleteNote(item.id)}
+                            className="p-1.5 rounded hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 shrink-0 self-start"
+                            title="Delete note"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>

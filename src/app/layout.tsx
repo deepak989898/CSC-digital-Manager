@@ -1,16 +1,28 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ToastProvider } from "@/components/ui/Toast";
+import { PWARegister } from "@/components/PWARegister";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "CSC Digital Manager",
   description: "Complete CMS system for CSC shop owners",
-  icons: { icon: "/logo.png" },
+  icons: { icon: "/logo.png", apple: "/logo.png" },
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "CSC Manager",
+  },
+  applicationName: "CSC Digital Manager",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#2563eb",
 };
 
 export default function RootLayout({
@@ -28,6 +40,7 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
+        <PWARegister />
         <ThemeProvider>
           <AuthProvider>
             {children}

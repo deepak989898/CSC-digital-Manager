@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { PWAInstallButton } from "@/components/PWAInstallButton";
 import { useRouter } from "next/navigation";
 import { logout } from "@/lib/firebase/auth";
 import { toast } from "sonner";
@@ -70,6 +71,7 @@ export function Topbar({
           )}
 
           {!isSuperAdmin && <NotificationBell />}
+          <PWAInstallButton className="hidden sm:inline-flex" />
 
           <div className="relative">
             <button

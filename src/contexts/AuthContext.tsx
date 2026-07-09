@@ -9,7 +9,7 @@ import {
   ReactNode,
 } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { getClientAuth } from "@/lib/firebase/config";
+import { getClientAuth, ensureAuthPersistence } from "@/lib/firebase/config";
 import { getUserProfile, getShop } from "@/lib/firebase/auth";
 import { UserProfile, Shop } from "@/types";
 
@@ -57,18 +57,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user, loadUserData]);
 
   useEffect(() => {
-    const auth = getClientAuth();
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setUser(firebaseUser);
-      if (firebaseUser) {
-        await loadUserData(firebaseUser);
-      } else {
-        setProfile(null);
-        setShop(null);
-      }
-      setLoading(false);
+    let unsubscribe: (() => void) | undefined;
+
+    void ensureAuthPersistence().then(() => {
+      const auth = getClientAuth();
+      unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+        setUser(firebaseUser);
+        if (firebaseUser) {
+          await loadUserData(firebaseUser);
+        } else {
+          setProfile(null);
+          setShop(null);
+        }
+        setLoading(false);
+      });
     });
-    return () => unsubscribe();
+
+    return () => unsubscribe?.();
   }, [loadUserData]);
 
   return (

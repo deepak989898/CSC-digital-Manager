@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 import { Pagination, usePagination } from "@/components/ui/Pagination";
 import { formatDate } from "@/lib/utils";
+import { downloadFileFromUrl } from "@/lib/download";
 import { Badge } from "@/components/ui/Badge";
 import Select from "@/components/ui/Select";
 import { toast } from "sonner";
@@ -28,6 +29,15 @@ export default function DocumentsPage() {
   const handleVerify = async (docId: string, status: "verified" | "rejected") => {
     try { await update(docId, { verificationStatus: status }); toast.success(`Document ${status}`); }
     catch { toast.error("Failed to update"); }
+  };
+
+  const handleDownload = async (doc: DocumentRecord) => {
+    try {
+      await downloadFileFromUrl(doc.fileURL, doc.fileName || doc.name);
+      toast.success("Download started");
+    } catch {
+      toast.error("Download failed");
+    }
   };
 
   const { paginatedItems, currentPage, setCurrentPage, totalItems } =
@@ -71,7 +81,26 @@ export default function DocumentsPage() {
                         </Link>
                       </td>
                       <td className="px-4 py-3">
-                        <Badge status={doc.verificationStatus || "pending"} />
+                        <Badge
+                          status={
+                            doc.verificationStatus === "rejected"
+                              ? "rejected"
+                              : doc.verificationStatus === "verified"
+                                ? "verified"
+                                : doc.verificationStatus === "pending"
+                                  ? "pending"
+                                  : "uploaded"
+                          }
+                          label={
+                            doc.verificationStatus === "verified"
+                              ? "Verified"
+                              : doc.verificationStatus === "rejected"
+                                ? "Rejected"
+                                : doc.verificationStatus === "pending"
+                                  ? "Pending"
+                                  : "Uploaded"
+                          }
+                        />
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell text-slate-600 dark:text-slate-300">{formatDate(doc.createdAt)}</td>
                       <td className="px-4 py-3 text-right">
@@ -85,9 +114,13 @@ export default function DocumentsPage() {
                           <a href={doc.fileURL} target="_blank" rel="noopener noreferrer">
                             <button className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"><Eye className="h-4 w-4" /></button>
                           </a>
-                          <a href={doc.fileURL} download>
-                            <button className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"><Download className="h-4 w-4" /></button>
-                          </a>
+                          <button
+                            type="button"
+                            onClick={() => handleDownload(doc)}
+                            className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                          >
+                            <Download className="h-4 w-4" />
+                          </button>
                         </div>
                       </td>
                     </tr>

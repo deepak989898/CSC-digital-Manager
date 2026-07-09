@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -11,6 +11,8 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
+
+let persistenceReady: Promise<void> | null = null;
 
 function getFirebaseApp() {
   if (getApps().length === 0) {
@@ -24,14 +26,24 @@ export const auth = typeof window !== "undefined" ? getAuth(getFirebaseApp()) : 
 export const db = typeof window !== "undefined" ? getFirestore(getFirebaseApp()) : null;
 export const storage = typeof window !== "undefined" ? getStorage(getFirebaseApp()) : null;
 
+export function getClientAuth() {
+  if (!auth) throw new Error("Auth not initialized");
+  if (!persistenceReady) {
+    persistenceReady = setPersistence(auth, browserLocalPersistence).catch(() => {
+      // Fallback: Firebase may already use local persistence by default
+    });
+  }
+  return auth;
+}
+
+export async function ensureAuthPersistence(): Promise<void> {
+  getClientAuth();
+  if (persistenceReady) await persistenceReady;
+}
+
 export function getClientDb() {
   if (!db) throw new Error("Firestore not initialized");
   return db;
-}
-
-export function getClientAuth() {
-  if (!auth) throw new Error("Auth not initialized");
-  return auth;
 }
 
 export function getClientStorage() {

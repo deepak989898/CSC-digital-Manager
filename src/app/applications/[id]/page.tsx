@@ -23,6 +23,7 @@ import { TableSkeleton } from "@/components/ui/Skeleton";
 import { Modal } from "@/components/ui/Modal";
 import { APPLICATION_STATUSES, DOCUMENT_TYPES, PAYMENT_METHODS } from "@/lib/constants";
 import { formatCurrency, formatDate, formatDateTime, getPaymentStatus } from "@/lib/utils";
+import { downloadFileFromUrl } from "@/lib/download";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -118,6 +119,7 @@ export default function ApplicationDetailPage() {
         fileURL: url,
         fileSize: file.size,
         mimeType: file.type,
+        verificationStatus: "uploaded",
         uploadedByName: profile.displayName,
         userId: profile.userId,
         shopId: profile.shopId,
@@ -129,6 +131,15 @@ export default function ApplicationDetailPage() {
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";
+    }
+  };
+
+  const handleDownloadDoc = async (doc: DocumentRecord) => {
+    try {
+      await downloadFileFromUrl(doc.fileURL, doc.fileName || doc.name);
+      toast.success("Download started");
+    } catch {
+      toast.error("Download failed");
     }
   };
 
@@ -353,9 +364,13 @@ export default function ApplicationDetailPage() {
                     <a href={doc.fileURL} target="_blank" rel="noopener noreferrer">
                       <button className="p-1.5 rounded hover:bg-slate-100"><Eye className="h-4 w-4" /></button>
                     </a>
-                    <a href={doc.fileURL} download>
-                      <button className="p-1.5 rounded hover:bg-slate-100"><Download className="h-4 w-4" /></button>
-                    </a>
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadDoc(doc)}
+                      className="p-1.5 rounded hover:bg-slate-100"
+                    >
+                      <Download className="h-4 w-4" />
+                    </button>
                     <button onClick={() => handleDeleteDoc(doc)} className="p-1.5 rounded hover:bg-red-50 text-red-500">
                       <Trash2 className="h-4 w-4" />
                     </button>

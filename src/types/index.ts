@@ -111,7 +111,7 @@ export interface DocumentRecord extends BaseRecord {
   fileSize: number;
   mimeType: string;
   isMissing?: boolean;
-  verificationStatus?: "pending" | "verified" | "rejected";
+  verificationStatus?: "pending" | "uploaded" | "verified" | "rejected";
   notes?: string;
   uploadedByName?: string;
 }

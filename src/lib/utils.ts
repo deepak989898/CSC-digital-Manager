@@ -48,6 +48,7 @@ export function getStatusColor(status: string): string {
     unpaid: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200",
     active: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200",
     inactive: "bg-gray-100 text-gray-800 dark:bg-slate-700 dark:text-slate-200",
+    uploaded: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200",
     verified: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200",
     low: "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200",
     medium: "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200",
