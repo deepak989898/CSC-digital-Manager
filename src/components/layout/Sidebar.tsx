@@ -32,6 +32,11 @@ import {
   Database,
   ShieldCheck,
   Sparkles,
+  ScanLine,
+  FileSignature,
+  Workflow,
+  CloudOff,
+  Palette,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -48,6 +53,9 @@ const shopNavItems: { href: string; label: string; icon: typeof LayoutDashboard;
   { href: "/services", label: "Services", icon: Briefcase },
   { href: "/applications", label: "Applications", icon: FileText, permission: "applications_view" },
   { href: "/documents", label: "Documents", icon: FolderOpen, permission: "documents_view" },
+  { href: "/scanner", label: "Document Scanner", icon: ScanLine },
+  { href: "/invoices", label: "Invoices", icon: Receipt },
+  { href: "/esign", label: "eSign", icon: FileSignature },
   { href: "/payments", label: "Payments", icon: CreditCard, permission: "payments_view" },
   { href: "/appointments", label: "Appointments", icon: Calendar },
   { href: "/expenses", label: "Expenses", icon: Receipt },
@@ -55,7 +63,9 @@ const shopNavItems: { href: string; label: string; icon: typeof LayoutDashboard;
   { href: "/attendance", label: "Attendance", icon: UserCheck },
   { href: "/tickets", label: "Help Desk", icon: Headphones },
   { href: "/marketing", label: "Marketing", icon: Sparkles },
+  { href: "/automation", label: "Automation", icon: Workflow },
   { href: "/reminders", label: "Reminders", icon: Clock },
+  { href: "/sync-status", label: "Sync Status", icon: CloudOff },
   { href: "/reports", label: "Reports", icon: BarChart3, permission: "reports_view" },
   { href: "/reports/advanced", label: "Advanced Reports", icon: PieChart, permission: "reports_view" },
   { href: "/notifications", label: "Notifications", icon: Bell },
@@ -74,6 +84,9 @@ const adminNavItems = [
   { href: "/admin/subscriptions", label: "Subscriptions", icon: CreditCard },
   { href: "/admin/revenue", label: "Revenue", icon: TrendingUp },
   { href: "/admin/usage", label: "Usage", icon: BarChart3 },
+  { href: "/admin/features", label: "Phase 4 Features", icon: Sparkles },
+  { href: "/admin/white-label", label: "White-Label", icon: Palette },
+  { href: "/admin/esign-settings", label: "eSign Settings", icon: FileSignature },
   { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
 ];
 

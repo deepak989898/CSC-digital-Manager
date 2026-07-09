@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { PageSkeleton } from "@/components/ui/Skeleton";
+import { NetworkStatusBanner } from "@/components/NetworkStatusBanner";
 import { canAccessRoute, isStaffRole } from "@/lib/permissions";
 
 export function DashboardLayout({
@@ -86,6 +87,7 @@ export function DashboardLayout({
     <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex-1 flex flex-col min-w-0">
+        <NetworkStatusBanner />
         <Topbar
           title={title}
           onMenuClick={() => setSidebarOpen(true)}

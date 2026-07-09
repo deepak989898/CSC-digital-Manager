@@ -24,7 +24,7 @@ export async function deleteFile(path: string): Promise<void> {
 
 export function getStoragePath(
   shopId: string,
-  type: "profile" | "documents",
+  type: "profile" | "documents" | "branding" | "invoices",
   fileName: string
 ): string {
   const timestamp = Date.now();

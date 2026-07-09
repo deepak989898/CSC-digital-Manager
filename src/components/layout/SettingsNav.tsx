@@ -3,11 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { User, Bell, Receipt, Shield, Users, CreditCard, Palette } from "lucide-react";
+import { User, Bell, Receipt, Shield, Users, CreditCard, Palette, Globe, CloudOff, FileText } from "lucide-react";
 
 const settingsLinks = [
   { href: "/settings/profile", label: "Shop Profile", icon: User },
   { href: "/settings/app", label: "App Settings", icon: Palette },
+  { href: "/settings/gst", label: "GST & Invoices", icon: Receipt },
+  { href: "/settings/forms", label: "Form Templates", icon: FileText },
+  { href: "/settings/branding", label: "Branding", icon: Palette },
+  { href: "/settings/domain", label: "Custom Domain", icon: Globe },
+  { href: "/settings/reminders", label: "Reminders", icon: Bell },
+  { href: "/settings/offline", label: "Offline / PWA", icon: CloudOff },
   { href: "/staff", label: "Staff Management", icon: Users },
   { href: "/subscription", label: "Subscription", icon: CreditCard },
   { href: "/settings/notifications", label: "Notifications", icon: Bell },

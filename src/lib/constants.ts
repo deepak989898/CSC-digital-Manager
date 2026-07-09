@@ -316,11 +316,18 @@ export const AI_SUGGESTED_QUESTIONS = [
   "Subscription expiry status?",
 ];
 
+export const PHASE4_BACKUP_COLLECTIONS = [
+  "ocrDocuments", "ocrResults", "formTemplates", "formSubmissions",
+  "invoices", "gstSettings", "eSignRequests", "brandingSettings",
+  "automationRules", "syncQueue", "featureFlags",
+];
+
 export const BACKUP_COLLECTIONS = [
   "customers", "services", "applications", "documents",
   "payments", "receipts", "expenses", "inventory",
   "attendance", "tickets", "appointments", "reminders",
   "staff", "notifications", "crmActivities",
+  ...PHASE4_BACKUP_COLLECTIONS,
 ];
 
 export const TIME_SLOTS = Array.from({ length: 20 }, (_, i) => {
@@ -337,3 +344,62 @@ export const MARKETING_TEMPLATES = [
   { name: "Birthday Wish", category: "birthday", subject: "Happy Birthday!", body: "Dear {{customerName}}, wishing you a very Happy Birthday!" },
   { name: "Service Promotion", category: "promotional", subject: "Special Offer", body: "Dear {{customerName}}, avail our services at special rates this month!" },
 ];
+
+// Phase 4
+export const OCR_DOCUMENT_TYPES = [
+  { value: "aadhaar", label: "Aadhaar Card" },
+  { value: "pan", label: "PAN Card" },
+  { value: "voter_id", label: "Voter ID" },
+  { value: "driving_license", label: "Driving License" },
+  { value: "passport", label: "Passport" },
+  { value: "marksheet", label: "Marksheet" },
+  { value: "income_certificate", label: "Income Certificate" },
+  { value: "caste_certificate", label: "Caste Certificate" },
+  { value: "domicile_certificate", label: "Domicile Certificate" },
+  { value: "bank_passbook", label: "Bank Passbook" },
+  { value: "electricity_bill", label: "Electricity Bill" },
+  { value: "other", label: "Other Document" },
+] as const;
+
+export const OCR_PROVIDERS = [
+  { value: "manual", label: "Manual / Local Parser" },
+  { value: "google_vision", label: "Google Vision OCR" },
+  { value: "openai_vision", label: "OpenAI Vision" },
+  { value: "azure", label: "Azure OCR" },
+] as const;
+
+export const INVOICE_TYPES = [
+  { value: "gst", label: "GST Invoice" },
+  { value: "non_gst", label: "Non-GST Receipt" },
+  { value: "tax", label: "Tax Invoice" },
+  { value: "proforma", label: "Proforma Invoice" },
+  { value: "credit_note", label: "Credit Note" },
+] as const;
+
+export const ESIGN_PROVIDERS = [
+  { value: "manual", label: "Manual (Provider-ready)" },
+  { value: "leegality", label: "Leegality" },
+  { value: "zoho_sign", label: "Zoho Sign" },
+  { value: "docusign", label: "DocuSign" },
+  { value: "aadhaar_esign", label: "Aadhaar eSign" },
+] as const;
+
+export const ESIGN_STATUSES = [
+  { value: "draft", label: "Draft" },
+  { value: "sent", label: "Sent" },
+  { value: "viewed", label: "Viewed" },
+  { value: "signed", label: "Signed" },
+  { value: "declined", label: "Declined" },
+  { value: "expired", label: "Expired" },
+] as const;
+
+export const AUTOMATION_TRIGGERS = [
+  { value: "payment_pending", label: "Pending Payment" },
+  { value: "application_stale", label: "Application Not Updated" },
+  { value: "subscription_expiring", label: "Subscription Expiring" },
+  { value: "document_missing", label: "Missing Document" },
+  { value: "invoice_due", label: "Invoice Due" },
+  { value: "customer_birthday", label: "Customer Birthday" },
+  { value: "esign_pending", label: "eSign Pending" },
+  { value: "staff_task", label: "Staff Task" },
+] as const;

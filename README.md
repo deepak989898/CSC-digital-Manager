@@ -52,6 +52,17 @@ A multi-tenant SaaS platform for CSC (Common Service Centre) shop owners. Manage
 - **App Settings** — Dark mode, language, currency, timezone, invoice settings
 - **Super Admin Control Panel** — Platform stats, plan management, health status
 
+### Phase 4 — AI Automation & Advanced SaaS
+- **AI Document OCR** — Upload/camera scan, field extraction, review & approve, Aadhaar masking
+- **Auto Form Filling** — OCR-to-form mapping with confidence scores and audit trail
+- **Document Scanner** — Camera capture, quality warnings, compress, multi-format upload
+- **GST Invoice System** — CGST/SGST/IGST, invoice builder, print/share, GST settings
+- **eSign Workflow** — Provider-ready (Leegality, Zoho Sign, DocuSign, Aadhaar eSign)
+- **White-Label Branding** — Logo, colors, theme, custom domain (Vercel-ready)
+- **Smart Reminders & Automation** — Rules for payments, documents, invoices, subscriptions
+- **Offline Sync / PWA** — Installable app, offline queue, sync status, network banner
+- **Super Admin Feature Toggles** — Enable/disable Phase 4 modules per shop
+
 ## Getting Started
 
 ### 1. Install
@@ -113,6 +124,11 @@ src/
 │   ├── api/razorpay/        # Payment API routes
 │   ├── appointments/        # Appointment booking
 │   ├── applications/        # Application management
+│   ├── automation/          # Smart automation rules
+│   ├── esign/               # eSign requests
+│   ├── invoices/            # GST invoices
+│   ├── scanner/             # OCR document scanner
+│   ├── sync-status/         # Offline sync status
 │   ├── attendance/          # Staff attendance
 │   ├── audit-logs/          # Audit trail
 │   ├── backup/              # Data backup & export
@@ -183,7 +199,54 @@ firebase/
 | `aiChats` | Per shop | AI conversation history |
 | `settings` | Per shop | App settings (theme, currency, etc.) |
 
-## Security Rules
+### Phase 4 Collections
+
+| Collection | Scope | Description |
+|-----------|-------|-------------|
+| `ocrDocuments` | Per shop | Uploaded documents for OCR |
+| `ocrResults` | Per shop | Approved OCR field extractions |
+| `ocrTemplates` | Per shop | Document type field templates |
+| `formTemplates` | Per shop | Service form definitions |
+| `formSubmissions` | Per shop | Submitted/auto-filled forms |
+| `fieldMappings` | Per shop | OCR → form field mappings |
+| `gstSettings` | Per shop | GSTIN, tax rates, invoice branding |
+| `invoices` | Per shop | GST/tax invoices |
+| `eSignRequests` | Per shop | Signature requests |
+| `eSignAuditLogs` | Per shop | eSign audit trail |
+| `eSignProviders` | Platform | eSign provider configuration |
+| `brandingSettings` | Per shop | White-label branding |
+| `customDomains` | Per shop | Custom domain requests |
+| `automationRules` | Per shop | Smart reminder automation |
+| `reminderLogs` | Per shop | Reminder delivery history |
+| `notificationQueue` | Per shop | Pending email/SMS/WhatsApp |
+| `syncQueue` | Per shop | Offline sync queue (Firestore) |
+| `syncLogs` | Per shop | Sync history |
+| `conflictLogs` | Per shop | Offline conflict resolution |
+| `featureFlags` | Per shop | Phase 4 feature toggles (doc ID = shopId) |
+| `planFeatures` | Platform | Plan-level feature flags |
+| `usageMetrics` | Per shop | OCR/invoice/storage usage |
+
+## OCR Provider Configuration
+
+1. Add API keys to Vercel environment variables (see `.env.example`)
+2. Shop users select provider in **Scanner → New Scan**
+3. Without API keys, **Manual / Local Parser** works using pasted text + regex extraction
+4. Supported providers: Google Vision, OpenAI Vision, Azure OCR
+
+## eSign Provider Configuration
+
+1. Super Admin → **eSign Settings** — save provider name and API key placeholders
+2. Set `ESIGN_PROVIDER`, `ESIGN_API_KEY`, `ESIGN_WEBHOOK_SECRET` in Vercel
+3. Shop users create requests at **eSign → New Request**
+4. No forged signatures — workflow tracks draft → sent → signed with audit logs
+
+## Firebase Storage Rules
+
+- Shop files stored under `shops/{shopId}/...`
+- Only authenticated shop members can read/write their shop paths
+- Super Admin has full access
+- Deploy: `firebase deploy --only storage`
+
 
 All shop-scoped collections enforce:
 
@@ -215,7 +278,10 @@ See `.env.example` for the full list:
 - Razorpay keys
 - Firebase service account (for API routes)
 - SMTP (email notifications)
-- `OPENAI_API_KEY` (optional, for future AI integration)
+- `OPENAI_API_KEY` (OCR + AI Assistant)
+- `GOOGLE_VISION_API_KEY`, `AZURE_OCR_*` (OCR providers)
+- `ESIGN_*` (eSign integration)
+- `WHATSAPP_API_KEY`, `SMS_API_KEY` (notifications)
 
 ## Deploy to Vercel
 

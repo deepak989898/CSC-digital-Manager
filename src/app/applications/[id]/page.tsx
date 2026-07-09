@@ -33,6 +33,7 @@ import {
   Trash2,
   CreditCard,
   FileText,
+  ScanLine,
 } from "lucide-react";
 
 declare global {
@@ -346,6 +347,9 @@ export default function ApplicationDetailPage() {
             <Button onClick={() => fileRef.current?.click()} loading={uploading}>
               <Upload className="h-4 w-4" /> Upload Document
             </Button>
+            <Link href={`/applications/${id}/scan-document`}>
+              <Button variant="outline"><ScanLine className="h-4 w-4" /> OCR Scan</Button>
+            </Link>
           </div>
           {documents.length === 0 ? (
             <p className="text-sm text-slate-500">No documents uploaded</p>

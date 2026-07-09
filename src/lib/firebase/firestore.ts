@@ -4,6 +4,7 @@ import {
   getDoc,
   getDocs,
   addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   query,
@@ -69,6 +70,28 @@ export async function createDocument<T extends Record<string, unknown>>(
     updatedAt: timestamp,
   });
   return ref.id;
+}
+
+export async function setDocument<T extends Record<string, unknown>>(
+  collectionName: string,
+  id: string,
+  data: Omit<T, "id" | "createdAt" | "updatedAt">,
+  merge = true
+): Promise<void> {
+  const db = getClientDb();
+  const timestamp = nowISO();
+  const cleaned = Object.fromEntries(
+    Object.entries(data).filter(([, value]) => value !== undefined)
+  );
+  await setDoc(
+    doc(db, collectionName, id),
+    {
+      ...cleaned,
+      ...(merge ? {} : { createdAt: timestamp }),
+      updatedAt: timestamp,
+    },
+    { merge }
+  );
 }
 
 export async function updateDocument(

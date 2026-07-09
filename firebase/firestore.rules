@@ -292,5 +292,184 @@ service cloud.firestore {
       allow update: if isSuperAdmin();
       allow delete: if isSuperAdmin();
     }
+
+    // Phase 4 — shop-scoped collections
+    match /ocrDocuments/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if canModifyShopDoc();
+      allow delete: if canModifyShopDoc();
+    }
+
+    match /ocrResults/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if canModifyShopDoc();
+      allow delete: if canModifyShopDoc();
+    }
+
+    match /ocrTemplates/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if canModifyShopDoc();
+      allow delete: if canModifyShopDoc();
+    }
+
+    match /formTemplates/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if canModifyShopDoc();
+      allow delete: if canModifyShopDoc();
+    }
+
+    match /formSubmissions/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if canModifyShopDoc();
+      allow delete: if canModifyShopDoc();
+    }
+
+    match /fieldMappings/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if canModifyShopDoc();
+      allow delete: if canModifyShopDoc();
+    }
+
+    match /scannedPages/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if canModifyShopDoc();
+      allow delete: if canModifyShopDoc();
+    }
+
+    match /invoices/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if canModifyShopDoc();
+      allow delete: if canModifyShopDoc();
+    }
+
+    match /invoiceItems/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if canModifyShopDoc();
+      allow delete: if canModifyShopDoc();
+    }
+
+    match /gstSettings/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if isActiveUser() && isShopOwner() && validTenantRecord();
+      allow update: if isActiveUser() && (ownsShop(resource.data.shopId) || isSuperAdmin());
+      allow delete: if isSuperAdmin();
+    }
+
+    match /taxReports/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if isSuperAdmin();
+      allow delete: if isSuperAdmin();
+    }
+
+    match /eSignRequests/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if canModifyShopDoc();
+      allow delete: if canModifyShopDoc();
+    }
+
+    match /eSignAuditLogs/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if isSuperAdmin();
+      allow delete: if isSuperAdmin();
+    }
+
+    match /eSignProviders/{docId} {
+      allow read: if isSuperAdmin();
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    match /brandingSettings/{docId} {
+      allow read: if isAuthenticated() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if isActiveUser() && isShopOwner() && validTenantRecord();
+      allow update: if isActiveUser() && (ownsShop(resource.data.shopId) || isSuperAdmin());
+      allow delete: if isSuperAdmin();
+    }
+
+    match /customDomains/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if isActiveUser() && isShopOwner() && validTenantRecord();
+      allow update: if isActiveUser() && (ownsShop(resource.data.shopId) || isSuperAdmin());
+      allow delete: if isSuperAdmin();
+    }
+
+    match /themeSettings/{docId} {
+      allow read: if isAuthenticated() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if isActiveUser() && isShopOwner() && validTenantRecord();
+      allow update: if isActiveUser() && (ownsShop(resource.data.shopId) || isSuperAdmin());
+      allow delete: if isSuperAdmin();
+    }
+
+    match /automationRules/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if canModifyShopDoc();
+      allow delete: if canModifyShopDoc();
+    }
+
+    match /reminderLogs/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if isSuperAdmin();
+      allow delete: if isSuperAdmin();
+    }
+
+    match /notificationQueue/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop() || isSuperAdmin();
+      allow update: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow delete: if isSuperAdmin();
+    }
+
+    match /syncQueue/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if canModifyShopDoc();
+      allow delete: if canModifyShopDoc();
+    }
+
+    match /syncLogs/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if isSuperAdmin();
+      allow delete: if isSuperAdmin();
+    }
+
+    match /conflictLogs/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop();
+      allow update: if canModifyShopDoc();
+      allow delete: if isSuperAdmin();
+    }
+
+    match /featureFlags/{shopId} {
+      allow read: if isAuthenticated() && (belongsToShop(shopId) || isSuperAdmin());
+      allow create: if isAuthenticated() && request.auth.uid == shopId;
+      allow update: if isAuthenticated() && (ownsShop(shopId) || isSuperAdmin());
+      allow delete: if isSuperAdmin();
+    }
+
+    match /planFeatures/{docId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    match /usageMetrics/{docId} {
+      allow read: if isActiveUser() && (belongsToShop(resource.data.shopId) || isSuperAdmin());
+      allow create: if canCreateForShop() || isSuperAdmin();
+      allow update: if isSuperAdmin();
+      allow delete: if isSuperAdmin();
+    }
   }
 }
