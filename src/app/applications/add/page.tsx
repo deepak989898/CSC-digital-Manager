@@ -131,10 +131,9 @@ function AddApplicationContent() {
       let customerName = "";
 
       if (isNewCustomer) {
-        customerId = await createDocument("customers", {
+        const customerData: Record<string, unknown> = {
           fullName: newCustomer.fullName.trim(),
           mobile: newCustomer.mobile.trim(),
-          email: newCustomer.email.trim() || undefined,
           address: newCustomer.address.trim(),
           city: newCustomer.city.trim(),
           state: newCustomer.state,
@@ -145,7 +144,11 @@ function AddApplicationContent() {
           priority: "medium",
           userId: profile.userId,
           shopId,
-        });
+        };
+        if (newCustomer.email.trim()) {
+          customerData.email = newCustomer.email.trim();
+        }
+        customerId = await createDocument("customers", customerData);
         customerName = newCustomer.fullName.trim();
       } else {
         const customer = customers.find((c) => c.id === form.customerId);
@@ -169,7 +172,7 @@ function AddApplicationContent() {
       const paid = Number(form.amountPaid) || 0;
       const paymentStatus = paid <= 0 ? "unpaid" : paid < fee ? "partial" : "paid";
 
-      await createDocument("applications", {
+      const appData: Record<string, unknown> = {
         referenceNumber: refNumber,
         customerId,
         customerName,
@@ -180,12 +183,15 @@ function AddApplicationContent() {
         amountPaid: paid,
         paymentStatus,
         notes: form.notes,
-        dueDate: form.dueDate || undefined,
         lastUpdatedById: profile.userId,
         lastUpdatedByName: profile.displayName,
         userId: profile.userId,
         shopId,
-      });
+      };
+      if (form.dueDate) {
+        appData.dueDate = form.dueDate;
+      }
+      await createDocument("applications", appData);
 
       try {
         await notifyShopEvent(

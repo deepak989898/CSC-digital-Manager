@@ -331,7 +331,7 @@ export default function ApplicationDetailPage() {
               options={DOCUMENT_TYPES.map((d) => ({ value: d.value, label: d.label }))}
               className="sm:w-48"
             />
-            <input ref={fileRef} type="file" accept=".jpg,.jpeg,.png,.webp,.pdf" onChange={handleFileUpload} className="hidden" />
+            <input ref={fileRef} type="file" accept="*/*" onChange={handleFileUpload} className="hidden" />
             <Button onClick={() => fileRef.current?.click()} loading={uploading}>
               <Upload className="h-4 w-4" /> Upload Document
             </Button>

@@ -60,8 +60,11 @@ export async function createDocument<T extends Record<string, unknown>>(
 ): Promise<string> {
   const db = getClientDb();
   const timestamp = nowISO();
+  const cleaned = Object.fromEntries(
+    Object.entries(data).filter(([, value]) => value !== undefined)
+  );
   const ref = await addDoc(collection(db, collectionName), {
-    ...data,
+    ...cleaned,
     createdAt: timestamp,
     updatedAt: timestamp,
   });
@@ -74,8 +77,11 @@ export async function updateDocument(
   data: Record<string, unknown>
 ): Promise<void> {
   const db = getClientDb();
+  const cleaned = Object.fromEntries(
+    Object.entries(data).filter(([, value]) => value !== undefined)
+  );
   await updateDoc(doc(db, collectionName, id), {
-    ...data,
+    ...cleaned,
     updatedAt: nowISO(),
   });
 }

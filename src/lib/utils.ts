@@ -65,12 +65,8 @@ export function formatStatusLabel(status: string): string {
 }
 
 export function validateFile(file: File): string | null {
-  const allowed = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
-  if (!allowed.includes(file.type)) {
-    return "Only JPEG, PNG, WebP and PDF files are allowed";
-  }
-  if (file.size > 5 * 1024 * 1024) {
-    return "File size must be less than 5MB";
+  if (file.size > 10 * 1024 * 1024) {
+    return "File size must be less than 10MB";
   }
   return null;
 }

@@ -226,12 +226,11 @@ function CustomerDetailContent() {
       const shopId = profile.shopId || profile.userId;
       const path = getStoragePath(shopId, "documents", file.name);
       const { url, fileName } = await uploadFile(path, file);
-      await createDocument("documents", {
+      const docPayload: Record<string, unknown> = {
         customerId: id,
         customerName: customer.fullName,
         name: displayName,
         type: docType,
-        customName: docType === "other" ? docCustomName.trim() || undefined : undefined,
         fileName,
         fileURL: url,
         fileSize: file.size,
@@ -240,7 +239,11 @@ function CustomerDetailContent() {
         uploadedByName: profile.displayName,
         userId: profile.userId,
         shopId,
-      });
+      };
+      if (docType === "other" && docCustomName.trim()) {
+        docPayload.customName = docCustomName.trim();
+      }
+      await createDocument("documents", docPayload);
       toast.success("Document uploaded");
       setDocCustomName("");
       await loadData();
@@ -335,7 +338,7 @@ function CustomerDetailContent() {
             <input
               ref={fileRef}
               type="file"
-              accept="image/*,application/pdf"
+              accept="*/*"
               className="hidden"
               onChange={handleDocUpload}
             />
@@ -349,7 +352,7 @@ function CustomerDetailContent() {
               <Upload className="h-4 w-4" />
               Choose & Upload
             </Button>
-            <span className="text-xs text-slate-500">PDF or image, max 5 MB</span>
+            <span className="text-xs text-slate-500">Any file type, max 10 MB</span>
           </div>
         </div>
 
