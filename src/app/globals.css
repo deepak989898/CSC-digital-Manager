@@ -200,15 +200,47 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    color: rgba(37, 99, 235, 0.045);
-    transform: rotate(-22deg);
+    padding: 1.5rem;
+    overflow: hidden;
     pointer-events: none;
     user-select: none;
     z-index: 0;
+  }
+
+  .invoice-sheet-watermark span {
+    display: block;
+    max-width: 90%;
+    text-align: center;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 1.25;
+    color: rgba(37, 99, 235, 0.05);
+    transform: rotate(-20deg);
     text-transform: uppercase;
+    word-break: break-word;
+  }
+
+  .invoice-logo-wrap {
+    width: 4.5rem;
+    height: 4.5rem;
+    padding: 0.35rem;
+    background: white;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(37, 99, 235, 0.15);
+    box-shadow: 0 1px 3px rgba(37, 99, 235, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .invoice-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
   }
 
   .invoice-sheet-inner {
@@ -247,14 +279,14 @@
     border: 1px solid rgba(37, 99, 235, 0.2);
     border-radius: 8px;
     padding: 0.75rem;
+    overflow: hidden;
   }
 
   .invoice-grand-total {
     background: linear-gradient(90deg, #1e40af, #2563eb);
     color: white !important;
-    margin: 0 -0.75rem -0.75rem;
-    margin-top: 0.5rem;
-    padding: 0.5rem 0.75rem;
+    margin: 0.25rem -0.75rem -0.75rem;
+    padding: 0.625rem 0.75rem;
     border-radius: 0 0 6px 6px;
   }
 
