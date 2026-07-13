@@ -1,8 +1,18 @@
-const CACHE_NAME = "csc-digital-manager-v1";
+const CACHE_NAME = "csc-digital-manager-v2";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(["/", "/logo.png", "/manifest.webmanifest"]))
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.addAll([
+        "/",
+        "/logo.png",
+        "/icon-192.png",
+        "/icon-512.png",
+        "/apple-touch-icon.png",
+        "/favicon-32.png",
+        "/manifest.webmanifest",
+      ])
+    )
   );
   self.skipWaiting();
 });
