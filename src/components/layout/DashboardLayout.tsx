@@ -95,7 +95,7 @@ export function DashboardLayout({
           searchValue={searchValue}
           onSearchChange={onSearchChange}
         />
-        <main className="flex-1 p-4 lg:p-6 overflow-auto text-slate-900 dark:text-slate-100">{children}</main>
+        <main className="app-compact flex-1 p-2 lg:p-3 overflow-auto text-slate-900 dark:text-slate-100">{children}</main>
       </div>
     </div>
   );

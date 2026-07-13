@@ -117,6 +117,49 @@
   .scrollbar-thin {
     scrollbar-width: thin;
   }
+
+  /* Compact dashboard density — applied via DashboardLayout main */
+  .app-compact .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.5rem;
+  }
+
+  .app-compact .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.5rem;
+  }
+
+  .app-compact .gap-6 {
+    gap: 0.75rem;
+  }
+
+  .app-compact .gap-4 {
+    gap: 0.5rem;
+  }
+
+  .app-compact .p-6 {
+    padding: 0.75rem;
+  }
+
+  .app-compact .p-4 {
+    padding: 0.625rem;
+  }
+
+  .app-compact table thead th {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  .app-compact table tbody td {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    line-height: 1.1rem;
+  }
+
+  .app-compact .rounded-xl.border table thead th,
+  .app-compact .rounded-xl.border table tbody td {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+  }
 }
 
 @media print {

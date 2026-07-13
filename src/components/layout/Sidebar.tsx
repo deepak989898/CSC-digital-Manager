@@ -125,7 +125,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex items-center justify-between px-5 py-5 border-b border-navy-800">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-navy-800">
           <Link href={isAdmin ? "/admin/dashboard" : "/dashboard"} className="flex items-center gap-3">
             <Image src="/logo.png" alt="CSC Digital Manager" width={40} height={40} className="rounded-lg" />
             <div>
@@ -147,7 +147,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 href={item.href}
                 onClick={onClose}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                  "flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium transition-colors",
                   isActive ? "bg-brand-blue text-white" : "text-navy-200 hover:bg-navy-800 hover:text-white"
                 )}
               >

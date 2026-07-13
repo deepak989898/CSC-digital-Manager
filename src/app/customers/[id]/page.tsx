@@ -4,6 +4,7 @@ import { Suspense, useState, useEffect, useRef, useMemo } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { PageContainer } from "@/components/layout/PageContainer";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   getDocument,
@@ -22,7 +23,6 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 import {
-  INDIAN_STATES,
   LEAD_STATUSES,
   CUSTOMER_PRIORITIES,
   DOCUMENT_TYPES,
@@ -47,6 +47,20 @@ import {
 } from "lucide-react";
 import { logAudit } from "@/lib/audit";
 
+function combineAddressParts(c: {
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+}): string {
+  const parts: string[] = [];
+  if (c.address?.trim()) parts.push(c.address.trim());
+  const cityState = [c.city, c.state].filter((s) => s?.trim()).join(", ");
+  if (cityState && !c.address?.includes(cityState)) parts.push(cityState);
+  if (c.pincode?.trim() && !c.address?.includes(c.pincode)) parts.push(c.pincode.trim());
+  return parts.join(", ") || c.address || "";
+}
+
 function CustomerDetailContent() {
   const { id } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
@@ -64,7 +78,6 @@ function CustomerDetailContent() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [noteText, setNoteText] = useState("");
-  const [tagInput, setTagInput] = useState("");
   const [docType, setDocType] = useState<DocumentType>("aadhaar");
   const [docCustomName, setDocCustomName] = useState("");
   const [form, setForm] = useState({
@@ -72,15 +85,11 @@ function CustomerDetailContent() {
     mobile: "",
     email: "",
     address: "",
-    city: "",
-    state: "",
-    pincode: "",
     aadhaarLast4: "",
     notes: "",
     priority: "medium" as Customer["priority"],
     leadStatus: "new" as Customer["leadStatus"],
     birthday: "",
-    tags: [] as string[],
   });
 
   const loadData = async () => {
@@ -91,16 +100,12 @@ function CustomerDetailContent() {
         fullName: data.fullName,
         mobile: data.mobile,
         email: data.email || "",
-        address: data.address,
-        city: data.city,
-        state: data.state,
-        pincode: data.pincode,
+        address: combineAddressParts(data),
         aadhaarLast4: data.aadhaarLast4,
         notes: data.notes || "",
         priority: data.priority || "medium",
         leadStatus: data.leadStatus || "new",
         birthday: data.birthday || "",
-        tags: data.tags || [],
       });
     }
     if (profile?.shopId) {
@@ -158,7 +163,20 @@ function CustomerDetailContent() {
     e.preventDefault();
     setSaving(true);
     try {
-      await updateDocument("customers", id, form);
+      await updateDocument("customers", id, {
+        fullName: form.fullName,
+        mobile: form.mobile,
+        email: form.email,
+        address: form.address,
+        city: "",
+        state: "",
+        pincode: "",
+        aadhaarLast4: form.aadhaarLast4,
+        notes: form.notes,
+        priority: form.priority,
+        leadStatus: form.leadStatus,
+        birthday: form.birthday,
+      });
       if (profile) {
         await logAudit({
           shopId: profile.shopId,
@@ -179,16 +197,6 @@ function CustomerDetailContent() {
     } finally {
       setSaving(false);
     }
-  };
-
-  const addTag = () => {
-    if (!tagInput.trim() || form.tags.includes(tagInput.trim())) return;
-    handleChange("tags", [...form.tags, tagInput.trim()]);
-    setTagInput("");
-  };
-
-  const removeTag = (tag: string) => {
-    handleChange("tags", form.tags.filter((t) => t !== tag));
   };
 
   const addNote = async () => {
@@ -569,19 +577,16 @@ function CustomerDetailContent() {
 
   return (
     <DashboardLayout title={isEdit ? "Edit Customer" : "Customer CRM"}>
-      <div className={isEdit ? "max-w-6xl mx-auto space-y-2" : "max-w-5xl mx-auto space-y-6"}>
-        <Link href="/customers" className={`inline-flex items-center gap-1 text-slate-500 hover:text-slate-700 ${isEdit ? "text-xs" : "text-sm"}`}>
+      <PageContainer size="lg">
+        <Link href="/customers" className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700">
           <ArrowLeft className="h-4 w-4" />
           Back to customers
         </Link>
 
         {isEdit ? (
           <>
-            <Card title="Edit Customer" className="[&>div:first-child]:px-4 [&>div:first-child]:py-2 [&>div:last-child]:p-3">
-              <form
-                onSubmit={handleSave}
-                className="space-y-2 [&_label]:text-xs [&_label]:leading-tight [&_.space-y-1]:space-y-0.5 [&_input]:h-8 [&_input]:py-1 [&_input]:px-2 [&_input]:text-xs [&_select]:h-8 [&_select]:py-1 [&_select]:px-2 [&_select]:text-xs [&_textarea]:py-1.5 [&_textarea]:px-2 [&_textarea]:text-xs"
-              >
+            <Card title="Edit Customer">
+              <form onSubmit={handleSave} className="space-y-2">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                   <Input label="Full Name" value={form.fullName} onChange={(e) => handleChange("fullName", e.target.value)} required />
                   <Input label="Mobile" value={form.mobile} onChange={(e) => handleChange("mobile", e.target.value)} required />
@@ -590,26 +595,15 @@ function CustomerDetailContent() {
                   <Select label="Priority" value={form.priority || "medium"} onChange={(e) => handleChange("priority", e.target.value)} options={CUSTOMER_PRIORITIES.map((p) => ({ value: p.value, label: p.label }))} />
                   <Select label="Lead Status" value={form.leadStatus || "new"} onChange={(e) => handleChange("leadStatus", e.target.value)} options={LEAD_STATUSES.map((s) => ({ value: s.value, label: s.label }))} />
                   <Input label="Birthday" type="date" value={form.birthday} onChange={(e) => handleChange("birthday", e.target.value)} />
-                  <Input label="City" value={form.city} onChange={(e) => handleChange("city", e.target.value)} />
-                  <Select label="State" value={form.state} onChange={(e) => handleChange("state", e.target.value)} options={INDIAN_STATES.map((s) => ({ value: s, label: s }))} placeholder="Select state" />
-                  <Input label="Pincode" value={form.pincode} onChange={(e) => handleChange("pincode", e.target.value)} />
                 </div>
-                <Input label="Address" value={form.address} onChange={(e) => handleChange("address", e.target.value)} required />
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Tags</label>
-                  <div className="flex gap-1.5 mb-1">
-                    <Input value={tagInput} onChange={(e) => setTagInput(e.target.value)} placeholder="Add tag" className="flex-1" />
-                    <Button type="button" variant="outline" size="sm" onClick={addTag}>Add</Button>
-                  </div>
-                  <div className="flex flex-wrap gap-1">
-                    {form.tags.map((tag) => (
-                      <span key={tag} className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-brand-blue/10 text-brand-blue rounded-full text-[10px]">
-                        {tag}
-                        <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-500">×</button>
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                <Textarea
+                  label="Address"
+                  value={form.address}
+                  onChange={(e) => handleChange("address", e.target.value)}
+                  rows={2}
+                  placeholder="Full address — street, city, state, pincode"
+                  required
+                />
                 <Textarea label="Notes" value={form.notes} onChange={(e) => handleChange("notes", e.target.value)} rows={2} />
                 <div className="flex gap-2 pt-1">
                   <Button type="submit" size="sm" loading={saving}>Save Changes</Button>
@@ -624,56 +618,56 @@ function CustomerDetailContent() {
           </>
         ) : (
           <>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
               <Card title={customer.fullName} className="lg:col-span-1">
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-slate-400" />{customer.mobile}</div>
-                  {customer.email && <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-slate-400" />{customer.email}</div>}
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex items-center gap-1.5"><Phone className="h-3.5 w-3.5 text-slate-400" />{customer.mobile}</div>
+                  {customer.email && <div className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5 text-slate-400" />{customer.email}</div>}
                   <div><span className="text-slate-500">Aadhaar:</span> XXXX-XXXX-{customer.aadhaarLast4}</div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1.5 flex-wrap">
                     {customer.priority && <Badge status={customer.priority} label={customer.priority} />}
                     {customer.leadStatus && <Badge status="submitted" label={customer.leadStatus} />}
                   </div>
                   {customer.tags && customer.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {customer.tags.map((tag) => (
-                        <span key={tag} className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-100 dark:bg-slate-700 rounded-full text-xs"><Tag className="h-3 w-3" />{tag}</span>
+                        <span key={tag} className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded-full text-[10px]"><Tag className="h-2.5 w-2.5" />{tag}</span>
                       ))}
                     </div>
                   )}
                   {customer.birthday && <div><span className="text-slate-500">Birthday:</span> {formatDate(customer.birthday)}</div>}
                   <div><span className="text-slate-500">Joined:</span> {formatDateTime(customer.createdAt)}</div>
-                  <div className="text-slate-500">{customer.address}, {customer.city}, {customer.state} - {customer.pincode}</div>
-                  {customer.notes && <p className="text-slate-600 italic">{customer.notes}</p>}
+                  <div className="text-slate-500 leading-tight">{combineAddressParts(customer)}</div>
+                  {customer.notes && <p className="text-slate-600 italic text-[11px]">{customer.notes}</p>}
                 </div>
-                <Button variant="outline" size="sm" className="mt-4" onClick={() => router.push(`/customers/${id}?edit=true`)}>Edit Customer</Button>
+                <Button variant="outline" size="sm" className="mt-2" onClick={() => router.push(`/customers/${id}?edit=true`)}>Edit Customer</Button>
               </Card>
 
               <Card title="Customer Timeline" className="lg:col-span-2">
-                <div className="mb-4 flex gap-2">
-                  <Textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} placeholder="Add a follow-up note..." rows={2} className="flex-1" />
-                  <Button onClick={addNote} disabled={!noteText.trim()}><Plus className="h-4 w-4" /></Button>
+                <div className="mb-2 flex gap-1.5">
+                  <Textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} placeholder="Add a follow-up note..." rows={1} className="flex-1 min-h-8" />
+                  <Button size="sm" onClick={addNote} disabled={!noteText.trim()}><Plus className="h-3.5 w-3.5" /></Button>
                 </div>
                 {timeline.length === 0 ? (
-                  <p className="text-sm text-slate-500">No activity yet</p>
+                  <p className="text-xs text-slate-500">No activity yet</p>
                 ) : (
-                  <div className="space-y-3 max-h-80 overflow-y-auto">
+                  <div className="space-y-1.5 max-h-44 overflow-y-auto">
                     {timeline.map((item) => (
-                      <div key={`${item.type}-${item.id}`} className="flex gap-3 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
-                        <div className="w-2 h-2 mt-2 rounded-full bg-brand-blue shrink-0" />
+                      <div key={`${item.type}-${item.id}`} className="flex gap-2 p-2 rounded-lg border border-slate-100 dark:border-slate-700">
+                        <div className="w-1.5 h-1.5 mt-1.5 rounded-full bg-brand-blue shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium">{item.title}</p>
-                          <p className="text-xs text-slate-500 break-words">{item.description}</p>
-                          <p className="text-xs text-slate-400 mt-1">{formatDateTime(item.time)}</p>
+                          <p className="text-xs font-medium">{item.title}</p>
+                          <p className="text-[10px] text-slate-500 break-words">{item.description}</p>
+                          <p className="text-[10px] text-slate-400 mt-0.5">{formatDateTime(item.time)}</p>
                         </div>
                         {item.canDelete && (
                           <button
                             type="button"
                             onClick={() => deleteNote(item.id)}
-                            className="p-1.5 rounded hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 shrink-0 self-start"
+                            className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 shrink-0 self-start"
                             title="Delete note"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3.5 w-3.5" />
                           </button>
                         )}
                       </div>
@@ -683,11 +677,13 @@ function CustomerDetailContent() {
               </Card>
             </div>
 
-            {workHistorySection()}
-            {documentsSection()}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
+              {workHistorySection(true)}
+              {documentsSection(true)}
+            </div>
           </>
         )}
-      </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

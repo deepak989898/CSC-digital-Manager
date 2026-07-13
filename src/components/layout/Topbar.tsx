@@ -43,7 +43,7 @@ export function Topbar({
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 lg:px-6 py-3">
+    <header className="sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-3 lg:px-4 py-2">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <button
@@ -52,7 +52,7 @@ export function Topbar({
           >
             <Menu className="h-5 w-5 text-slate-600 dark:text-slate-300" />
           </button>
-          <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100 truncate">{title}</h1>
+          <h1 className="text-base font-semibold text-slate-900 dark:text-slate-100 truncate">{title}</h1>
         </div>
 
         <div className="flex items-center gap-3">

@@ -12,12 +12,12 @@ export function Card({ children, className, title, action }: CardProps) {
   return (
     <div className={cn("bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm", className)}>
       {(title || action) && (
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-700">
-          {title && <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">{title}</h3>}
+        <div className="flex items-center justify-between px-4 py-2 border-b border-slate-100 dark:border-slate-700">
+          {title && <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{title}</h3>}
           {action}
         </div>
       )}
-      <div className={cn(!title && !action ? "p-6" : "p-6")}>{children}</div>
+      <div className={cn(!title && !action ? "p-3" : "p-3")}>{children}</div>
     </div>
   );
 }
@@ -44,14 +44,14 @@ export function StatCard({
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-5">
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-3">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">{title}</p>
-          <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{value}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">{title}</p>
+          <p className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-0.5">{value}</p>
           {trend && <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{trend}</p>}
         </div>
-        <div className={cn("p-3 rounded-lg", colors[color])}>{icon}</div>
+        <div className={cn("p-2 rounded-lg", colors[color])}>{icon}</div>
       </div>
     </div>
   );
