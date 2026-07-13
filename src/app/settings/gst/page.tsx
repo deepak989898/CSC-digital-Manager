@@ -147,9 +147,22 @@ export default function GstSettingsPage() {
                 </div>
                 <div>
                   <input ref={logoRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleLogo(e.target.files[0])} />
-                  <Button type="button" variant="outline" onClick={() => logoRef.current?.click()}>
-                    <Upload className="h-4 w-4" /> Upload Invoice Logo
-                  </Button>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Button type="button" variant="outline" onClick={() => logoRef.current?.click()}>
+                      <Upload className="h-4 w-4" /> Upload Invoice Logo
+                    </Button>
+                    {form.logoURL ? (
+                      <div className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 p-2 bg-slate-50 dark:bg-slate-800">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={form.logoURL}
+                          alt="Invoice logo preview"
+                          className="h-12 w-12 object-contain"
+                        />
+                        <span className="text-xs text-green-600">Logo ready for invoices</span>
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
                 <Button type="submit" loading={saving}>Save Settings</Button>
               </form>

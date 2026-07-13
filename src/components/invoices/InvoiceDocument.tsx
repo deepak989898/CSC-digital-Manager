@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import Image from "next/image";
 import { GstSettings, Invoice, Shop } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { getInvoiceTypeLabel } from "@/lib/gst";
@@ -36,17 +38,38 @@ interface InvoiceDocumentProps {
 }
 
 function InvoiceLogo({ src, alt }: { src: string; alt: string }) {
+  const [useNativeImg, setUseNativeImg] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  if (failed) return null;
+
+  if (useNativeImg) {
+    return (
+      <div className="invoice-logo-wrap shrink-0 relative z-10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt={alt}
+          className="invoice-logo-img"
+          loading="eager"
+          decoding="async"
+          onError={() => setFailed(true)}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="invoice-logo-wrap shrink-0">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+    <div className="invoice-logo-wrap shrink-0 relative z-10">
+      <Image
         src={src}
         alt={alt}
-        crossOrigin="anonymous"
+        width={72}
+        height={72}
+        unoptimized
+        priority
         className="invoice-logo-img"
-        onError={(e) => {
-          e.currentTarget.style.display = "none";
-        }}
+        onError={() => setUseNativeImg(true)}
       />
     </div>
   );
@@ -61,7 +84,8 @@ export function InvoiceDocument({
 }: InvoiceDocumentProps) {
   const showGst = invoice.invoiceType === "gst" || invoice.invoiceType === "tax";
   const businessName = gst?.legalName || shop?.shopName || "CSC Shop";
-  const logoUrl = gst?.logoURL || shop?.photoURL;
+  const logoUrl = (gst?.logoURL || shop?.photoURL)?.trim();
+  const hasLogo = Boolean(logoUrl && /^https?:\/\//i.test(logoUrl));
   const address =
     gst?.billingAddress ||
     [shop?.address, shop?.city, shop?.state, shop?.pincode].filter(Boolean).join(", ");
@@ -83,7 +107,7 @@ export function InvoiceDocument({
         <div className="invoice-header-band p-4">
           <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
             <div className="flex gap-3 min-w-0 flex-1">
-              {logoUrl ? <InvoiceLogo src={logoUrl} alt={businessName} /> : null}
+              {hasLogo && logoUrl ? <InvoiceLogo src={logoUrl} alt={businessName} /> : null}
               <div className="min-w-0 flex-1">
                 <h2 className="text-base font-bold text-slate-900 break-words leading-snug">{businessName}</h2>
                 {address ? (
@@ -226,15 +250,16 @@ export function InvoiceDocument({
                 {phone ? <p className="mt-0.5">Contact: {phone}</p> : null}
               </div>
               {gst?.signatureURL ? (
-                <div className="text-center shrink-0">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                <div className="text-center shrink-0 relative z-10">
+                  <Image
                     src={gst.signatureURL}
                     alt="Authorized signature"
-                    crossOrigin="anonymous"
-                    className="h-10 max-w-[100px] object-contain mx-auto"
+                    width={100}
+                    height={48}
+                    unoptimized
+                    className="h-10 w-auto max-w-[100px] object-contain mx-auto"
                     onError={(e) => {
-                      e.currentTarget.style.display = "none";
+                      e.currentTarget.style.visibility = "hidden";
                     }}
                   />
                   <p className="text-[10px] text-slate-500 mt-1">Authorized Signatory</p>
