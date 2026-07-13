@@ -11,6 +11,7 @@ import { INDIAN_STATES } from "@/lib/constants";
 import { INDIAN_STATE_CODES } from "@/lib/gst";
 import { GstSettings } from "@/types";
 import Input from "@/components/ui/Input";
+import Textarea from "@/components/ui/Textarea";
 import Select from "@/components/ui/Select";
 import Button from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -31,6 +32,7 @@ export default function GstSettingsPage() {
     stateCode: "",
     invoicePrefix: "INV",
     invoiceTerms: "",
+    invoiceFooter: "",
     logoURL: "",
     signatureURL: "",
     gstEnabled: true,
@@ -54,6 +56,7 @@ export default function GstSettingsPage() {
           stateCode: s.stateCode || "",
           invoicePrefix: s.invoicePrefix || "INV",
           invoiceTerms: s.invoiceTerms || "",
+          invoiceFooter: s.invoiceFooter || "",
           logoURL: s.logoURL || "",
           signatureURL: s.signatureURL || "",
           gstEnabled: s.gstEnabled ?? true,
@@ -129,7 +132,14 @@ export default function GstSettingsPage() {
                 <Input label="Billing Address" value={form.billingAddress} onChange={(e) => setForm({ ...form, billingAddress: e.target.value })} required />
                 <Select label="State" value={form.state} onChange={(e) => handleState(e.target.value)} options={INDIAN_STATES.map((s) => ({ value: s, label: s }))} placeholder="Select state" />
                 <Input label="Invoice Prefix" value={form.invoicePrefix} onChange={(e) => setForm({ ...form, invoicePrefix: e.target.value })} />
-                <Input label="Invoice Terms" value={form.invoiceTerms} onChange={(e) => setForm({ ...form, invoiceTerms: e.target.value })} />
+                <Input label="Invoice Terms" value={form.invoiceTerms} onChange={(e) => setForm({ ...form, invoiceTerms: e.target.value })} placeholder="e.g. Payment due within 7 days" />
+                <Textarea
+                  label="Invoice Footer"
+                  value={form.invoiceFooter}
+                  onChange={(e) => setForm({ ...form, invoiceFooter: e.target.value })}
+                  rows={3}
+                  placeholder="Thank you message, bank details, terms — shown at bottom of every invoice"
+                />
                 <div className="grid grid-cols-3 gap-2">
                   <Input label="CGST %" type="number" value={form.defaultCgstRate} onChange={(e) => setForm({ ...form, defaultCgstRate: e.target.value })} />
                   <Input label="SGST %" type="number" value={form.defaultSgstRate} onChange={(e) => setForm({ ...form, defaultSgstRate: e.target.value })} />

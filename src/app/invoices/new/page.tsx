@@ -77,7 +77,7 @@ export default function NewInvoicePage() {
       isInterState: interState,
       applyGst,
     });
-    return { ...li, name: it.name, hsnSac: it.hsnSac || undefined };
+    return { ...li, name: it.name, ...(it.hsnSac?.trim() ? { hsnSac: it.hsnSac.trim() } : {}) };
   });
 
   const totals = calculateInvoiceTotals(lineItems);
@@ -131,15 +131,15 @@ export default function NewInvoicePage() {
         customerId: customer.id,
         customerName: customer.fullName,
         customerMobile: customer.mobile,
-        customerGstin: form.customerGstin || undefined,
-        customerState: form.customerState,
-        items: lineItems,
+        customerGstin: form.customerGstin?.trim() || undefined,
+        customerState: form.customerState || undefined,
+        items: lineItems.filter((li) => li.name?.trim()),
         ...totals,
         paymentStatus: "unpaid",
         amountPaid: 0,
         invoiceDate: new Date().toISOString(),
         dueDate: form.dueDate || undefined,
-        notes: form.notes,
+        notes: form.notes?.trim() || undefined,
         isInterState: interState,
         userId: profile.userId,
         shopId,

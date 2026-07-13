@@ -142,13 +142,41 @@ export function InvoiceDocument({ invoice, gst, shop, className = "" }: InvoiceD
         </div>
 
         {invoice.notes && (
-          <p className="mt-3 text-xs text-slate-600 dark:text-slate-300 border-t pt-2">
+          <p className="mt-3 text-xs text-slate-600 dark:text-slate-300">
             <strong>Notes:</strong> {invoice.notes}
           </p>
         )}
-        {gst?.invoiceTerms && (
-          <p className="mt-2 text-[10px] text-slate-500">{gst.invoiceTerms}</p>
-        )}
+
+        <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-600 space-y-2">
+          {gst?.invoiceTerms && (
+            <p className="text-[10px] text-slate-600 dark:text-slate-400">
+              <strong>Terms:</strong> {gst.invoiceTerms}
+            </p>
+          )}
+          <p className="text-[10px] text-slate-600 dark:text-slate-400 text-center whitespace-pre-line">
+            {gst?.invoiceFooter?.trim() ||
+              "Thank you for your business! This is a computer-generated invoice."}
+          </p>
+          <div className="flex justify-between items-end pt-2">
+            <div className="text-[10px] text-slate-500">
+              <p>{businessName}</p>
+              {phone && <p>Contact: {phone}</p>}
+            </div>
+            {gst?.signatureURL && (
+              <div className="text-center">
+                <Image
+                  src={gst.signatureURL}
+                  alt="Authorized signature"
+                  width={80}
+                  height={40}
+                  className="h-10 w-auto object-contain mx-auto"
+                  unoptimized
+                />
+                <p className="text-[10px] text-slate-500 mt-1">Authorized Signatory</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

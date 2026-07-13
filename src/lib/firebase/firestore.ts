@@ -21,6 +21,22 @@ export function nowISO(): string {
   return new Date().toISOString();
 }
 
+/** Remove undefined values recursively — Firestore rejects undefined at any depth */
+export function cleanFirestoreData<T>(value: T): T {
+  if (value === undefined) return value;
+  if (Array.isArray(value)) {
+    return value.map((item) => cleanFirestoreData(item)) as T;
+  }
+  if (value !== null && typeof value === "object" && !(value instanceof Date)) {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .filter(([, v]) => v !== undefined)
+        .map(([k, v]) => [k, cleanFirestoreData(v)])
+    ) as T;
+  }
+  return value;
+}
+
 export function toISO(value: unknown): string {
   if (value instanceof Timestamp) return value.toDate().toISOString();
   if (typeof value === "string") return value;
@@ -61,8 +77,8 @@ export async function createDocument<T extends Record<string, unknown>>(
 ): Promise<string> {
   const db = getClientDb();
   const timestamp = nowISO();
-  const cleaned = Object.fromEntries(
-    Object.entries(data).filter(([, value]) => value !== undefined)
+  const cleaned = cleanFirestoreData(
+    Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined))
   );
   const ref = await addDoc(collection(db, collectionName), {
     ...cleaned,
@@ -80,8 +96,8 @@ export async function setDocument<T extends Record<string, unknown>>(
 ): Promise<void> {
   const db = getClientDb();
   const timestamp = nowISO();
-  const cleaned = Object.fromEntries(
-    Object.entries(data).filter(([, value]) => value !== undefined)
+  const cleaned = cleanFirestoreData(
+    Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined))
   );
   await setDoc(
     doc(db, collectionName, id),
@@ -100,8 +116,8 @@ export async function updateDocument(
   data: Record<string, unknown>
 ): Promise<void> {
   const db = getClientDb();
-  const cleaned = Object.fromEntries(
-    Object.entries(data).filter(([, value]) => value !== undefined)
+  const cleaned = cleanFirestoreData(
+    Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined))
   );
   await updateDoc(doc(db, collectionName, id), {
     ...cleaned,

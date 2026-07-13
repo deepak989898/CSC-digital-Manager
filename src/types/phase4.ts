@@ -162,6 +162,7 @@ export interface GstSettings extends BaseRecord {
   stateCode: string;
   invoicePrefix: string;
   invoiceTerms?: string;
+  invoiceFooter?: string;
   logoURL?: string;
   signatureURL?: string;
   gstEnabled: boolean;
