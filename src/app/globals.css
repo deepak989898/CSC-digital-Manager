@@ -173,4 +173,16 @@
     background: white !important;
     color: black !important;
   }
+  aside,
+  header,
+  nav {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+  .print-invoice {
+    border: none !important;
+    box-shadow: none !important;
+  }
 }
