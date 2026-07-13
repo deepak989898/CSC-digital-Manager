@@ -330,19 +330,20 @@ function CustomerDetailContent() {
     );
   }
 
-  const documentsSection = (
+  const documentsSection = (compact = false) => (
     <Card
       title="Customer Documents"
+      className={compact ? "[&>div:first-child]:px-4 [&>div:first-child]:py-2 [&>div:last-child]:p-3" : undefined}
       action={
         <span className="text-xs text-slate-500">{documents.length} file{documents.length !== 1 ? "s" : ""}</span>
       }
     >
-      <div className="space-y-4">
-        <div className="rounded-lg border border-dashed border-slate-300 dark:border-slate-600 p-4 bg-slate-50/50 dark:bg-slate-800/40">
-          <p className="text-sm font-medium text-slate-700 dark:text-slate-200 mb-3">
+      <div className={compact ? "space-y-2" : "space-y-4"}>
+        <div className={`rounded-lg border border-dashed border-slate-300 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-800/40 ${compact ? "p-2" : "p-4"}`}>
+          <p className={`font-medium text-slate-700 dark:text-slate-200 ${compact ? "text-xs mb-1.5" : "text-sm mb-3"}`}>
             Upload PAN, Aadhaar, or any other document
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+          <div className={`grid grid-cols-1 sm:grid-cols-2 ${compact ? "gap-2 mb-2 [&_label]:text-xs [&_input]:h-8 [&_input]:py-1 [&_input]:text-xs [&_select]:h-8 [&_select]:py-1 [&_select]:text-xs" : "gap-3 mb-3"}`}>
             <Select
               label="Document Type"
               value={docType}
@@ -358,7 +359,7 @@ function CustomerDetailContent() {
               />
             )}
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className={`flex flex-wrap items-center ${compact ? "gap-2" : "gap-3"}`}>
             <input
               ref={fileRef}
               type="file"
@@ -369,6 +370,7 @@ function CustomerDetailContent() {
             <Button
               type="button"
               variant="outline"
+              size={compact ? "sm" : "md"}
               loading={uploading}
               onClick={() => fileRef.current?.click()}
               disabled={docType === "other" && !docCustomName.trim()}
@@ -376,18 +378,18 @@ function CustomerDetailContent() {
               <Upload className="h-4 w-4" />
               Choose & Upload
             </Button>
-            <span className="text-xs text-slate-500">Any file type, max 10 MB</span>
+            <span className="text-[10px] text-slate-500">Any file type, max 10 MB</span>
           </div>
         </div>
 
         {documents.length === 0 ? (
-          <p className="text-sm text-slate-500">No documents uploaded for this customer yet.</p>
+          <p className={`text-slate-500 ${compact ? "text-xs" : "text-sm"}`}>No documents uploaded for this customer yet.</p>
         ) : (
-          <div className="space-y-2">
+          <div className={compact ? "space-y-1 max-h-36 overflow-y-auto" : "space-y-2"}>
             {documents.map((d) => (
               <div
                 key={d.id}
-                className="flex items-center justify-between gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700"
+                className={`flex items-center justify-between gap-2 rounded-lg border border-slate-200 dark:border-slate-700 ${compact ? "p-2" : "p-3 gap-3"}`}
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <FileText className="h-5 w-5 text-brand-blue shrink-0" />
@@ -444,52 +446,53 @@ function CustomerDetailContent() {
     </Card>
   );
 
-  const workHistorySection = (
+  const workHistorySection = (compact = false) => (
     <Card
       title="Work History"
+      className={compact ? "[&>div:first-child]:px-4 [&>div:first-child]:py-2 [&>div:last-child]:p-3" : undefined}
       action={
-        <Link href={`/applications/add?customerId=${id}`} className="text-sm text-brand-blue hover:underline">
+        <Link href={`/applications/add?customerId=${id}`} className="text-xs text-brand-blue hover:underline">
           + New Work
         </Link>
       }
     >
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-        <div className="rounded-lg bg-slate-50 dark:bg-slate-800/60 p-3">
-          <p className="text-xs text-slate-500">Total Jobs</p>
-          <p className="text-lg font-semibold">{workSummary.totalJobs}</p>
+      <div className={`grid grid-cols-2 sm:grid-cols-4 ${compact ? "gap-2 mb-2" : "gap-3 mb-5"}`}>
+        <div className={`rounded-lg bg-slate-50 dark:bg-slate-800/60 ${compact ? "p-2" : "p-3"}`}>
+          <p className="text-[10px] text-slate-500">Total Jobs</p>
+          <p className={`font-semibold ${compact ? "text-sm" : "text-lg"}`}>{workSummary.totalJobs}</p>
         </div>
-        <div className="rounded-lg bg-slate-50 dark:bg-slate-800/60 p-3">
-          <p className="text-xs text-slate-500">Total Amount</p>
-          <p className="text-lg font-semibold">{formatCurrency(workSummary.totalFee)}</p>
+        <div className={`rounded-lg bg-slate-50 dark:bg-slate-800/60 ${compact ? "p-2" : "p-3"}`}>
+          <p className="text-[10px] text-slate-500">Total Amount</p>
+          <p className={`font-semibold ${compact ? "text-sm" : "text-lg"}`}>{formatCurrency(workSummary.totalFee)}</p>
         </div>
-        <div className="rounded-lg bg-green-50 dark:bg-green-900/20 p-3">
-          <p className="text-xs text-green-700 dark:text-green-400">Paid</p>
-          <p className="text-lg font-semibold text-green-700 dark:text-green-400">
+        <div className={`rounded-lg bg-green-50 dark:bg-green-900/20 ${compact ? "p-2" : "p-3"}`}>
+          <p className="text-[10px] text-green-700 dark:text-green-400">Paid</p>
+          <p className={`font-semibold text-green-700 dark:text-green-400 ${compact ? "text-sm" : "text-lg"}`}>
             {formatCurrency(workSummary.totalPaid)}
           </p>
         </div>
-        <div className="rounded-lg bg-amber-50 dark:bg-amber-900/20 p-3">
-          <p className="text-xs text-amber-700 dark:text-amber-400">Pending</p>
-          <p className="text-lg font-semibold text-amber-700 dark:text-amber-400">
+        <div className={`rounded-lg bg-amber-50 dark:bg-amber-900/20 ${compact ? "p-2" : "p-3"}`}>
+          <p className="text-[10px] text-amber-700 dark:text-amber-400">Pending</p>
+          <p className={`font-semibold text-amber-700 dark:text-amber-400 ${compact ? "text-sm" : "text-lg"}`}>
             {formatCurrency(workSummary.pending)}
           </p>
         </div>
       </div>
 
       {applications.length === 0 ? (
-        <p className="text-sm text-slate-500">No work / applications for this customer yet.</p>
+        <p className={`text-slate-500 ${compact ? "text-xs" : "text-sm"}`}>No work / applications for this customer yet.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className={`overflow-x-auto ${compact ? "max-h-40 overflow-y-auto" : ""}`}>
+          <table className={`w-full ${compact ? "text-xs" : "text-sm"}`}>
             <thead>
               <tr className="border-b border-slate-100 dark:border-slate-700 text-left">
-                <th className="pb-2 font-medium text-slate-600">Ref / Service</th>
-                <th className="pb-2 font-medium text-slate-600">Status</th>
-                <th className="pb-2 font-medium text-slate-600">Fee</th>
-                <th className="pb-2 font-medium text-slate-600">Paid</th>
-                <th className="pb-2 font-medium text-slate-600">Pending</th>
-                <th className="pb-2 font-medium text-slate-600">Done By</th>
-                <th className="pb-2 font-medium text-slate-600">Date</th>
+                <th className={`font-medium text-slate-600 ${compact ? "pb-1" : "pb-2"}`}>Ref / Service</th>
+                <th className={`font-medium text-slate-600 ${compact ? "pb-1" : "pb-2"}`}>Status</th>
+                <th className={`font-medium text-slate-600 ${compact ? "pb-1" : "pb-2"}`}>Fee</th>
+                <th className={`font-medium text-slate-600 ${compact ? "pb-1" : "pb-2"}`}>Paid</th>
+                <th className={`font-medium text-slate-600 ${compact ? "pb-1" : "pb-2"}`}>Pending</th>
+                <th className={`font-medium text-slate-600 ${compact ? "pb-1" : "pb-2"}`}>Done By</th>
+                <th className={`font-medium text-slate-600 ${compact ? "pb-1" : "pb-2"}`}>Date</th>
               </tr>
             </thead>
             <tbody>
@@ -501,7 +504,7 @@ function CustomerDetailContent() {
                   "—";
                 return (
                   <tr key={app.id} className="border-b border-slate-50 dark:border-slate-800">
-                    <td className="py-3 pr-2">
+                    <td className={compact ? "py-1.5 pr-2" : "py-3 pr-2"}>
                       <Link href={`/applications/${app.id}`} className="font-medium text-brand-blue hover:underline">
                         {app.referenceNumber}
                       </Link>
@@ -510,13 +513,13 @@ function CustomerDetailContent() {
                         {app.serviceName}
                       </p>
                     </td>
-                    <td className="py-3 pr-2">
+                    <td className={compact ? "py-1.5 pr-2" : "py-3 pr-2"}>
                       <Badge status={app.status} />
                     </td>
-                    <td className="py-3 pr-2">{formatCurrency(app.applicationFee)}</td>
-                    <td className="py-3 pr-2 text-green-600">{formatCurrency(app.amountPaid)}</td>
-                    <td className="py-3 pr-2 text-amber-600">{formatCurrency(pendingAmt)}</td>
-                    <td className="py-3 pr-2">
+                    <td className={compact ? "py-1.5 pr-2" : "py-3 pr-2"}>{formatCurrency(app.applicationFee)}</td>
+                    <td className={compact ? "py-1.5 pr-2 text-green-600" : "py-3 pr-2 text-green-600"}>{formatCurrency(app.amountPaid)}</td>
+                    <td className={compact ? "py-1.5 pr-2 text-amber-600" : "py-3 pr-2 text-amber-600"}>{formatCurrency(pendingAmt)}</td>
+                    <td className={compact ? "py-1.5 pr-2" : "py-3 pr-2"}>
                       <span className="inline-flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300">
                         <User className="h-3 w-3" />
                         {doneBy}
@@ -525,7 +528,7 @@ function CustomerDetailContent() {
                         <p className="text-[10px] text-slate-400 mt-0.5">{formatDate(app.completedAt)}</p>
                       )}
                     </td>
-                    <td className="py-3 text-slate-500 whitespace-nowrap">{formatDate(app.createdAt)}</td>
+                    <td className={compact ? "py-1.5 text-slate-500 whitespace-nowrap" : "py-3 text-slate-500 whitespace-nowrap"}>{formatDate(app.createdAt)}</td>
                   </tr>
                 );
               })}
@@ -534,7 +537,7 @@ function CustomerDetailContent() {
         </div>
       )}
 
-      {payments.length > 0 && (
+      {payments.length > 0 && !compact && (
         <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700">
           <p className="text-sm font-medium mb-3 flex items-center gap-2">
             <IndianRupee className="h-4 w-4 text-green-600" />
@@ -566,17 +569,20 @@ function CustomerDetailContent() {
 
   return (
     <DashboardLayout title={isEdit ? "Edit Customer" : "Customer CRM"}>
-      <div className="max-w-5xl mx-auto space-y-6">
-        <Link href="/customers" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700">
+      <div className={isEdit ? "max-w-6xl mx-auto space-y-2" : "max-w-5xl mx-auto space-y-6"}>
+        <Link href="/customers" className={`inline-flex items-center gap-1 text-slate-500 hover:text-slate-700 ${isEdit ? "text-xs" : "text-sm"}`}>
           <ArrowLeft className="h-4 w-4" />
           Back to customers
         </Link>
 
         {isEdit ? (
           <>
-            <Card title="Edit Customer">
-              <form onSubmit={handleSave} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Card title="Edit Customer" className="[&>div:first-child]:px-4 [&>div:first-child]:py-2 [&>div:last-child]:p-3">
+              <form
+                onSubmit={handleSave}
+                className="space-y-2 [&_label]:text-xs [&_label]:leading-tight [&_.space-y-1]:space-y-0.5 [&_input]:h-8 [&_input]:py-1 [&_input]:px-2 [&_input]:text-xs [&_select]:h-8 [&_select]:py-1 [&_select]:px-2 [&_select]:text-xs [&_textarea]:py-1.5 [&_textarea]:px-2 [&_textarea]:text-xs"
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                   <Input label="Full Name" value={form.fullName} onChange={(e) => handleChange("fullName", e.target.value)} required />
                   <Input label="Mobile" value={form.mobile} onChange={(e) => handleChange("mobile", e.target.value)} required />
                   <Input label="Email" type="email" value={form.email} onChange={(e) => handleChange("email", e.target.value)} />
@@ -584,37 +590,37 @@ function CustomerDetailContent() {
                   <Select label="Priority" value={form.priority || "medium"} onChange={(e) => handleChange("priority", e.target.value)} options={CUSTOMER_PRIORITIES.map((p) => ({ value: p.value, label: p.label }))} />
                   <Select label="Lead Status" value={form.leadStatus || "new"} onChange={(e) => handleChange("leadStatus", e.target.value)} options={LEAD_STATUSES.map((s) => ({ value: s.value, label: s.label }))} />
                   <Input label="Birthday" type="date" value={form.birthday} onChange={(e) => handleChange("birthday", e.target.value)} />
-                </div>
-                <Input label="Address" value={form.address} onChange={(e) => handleChange("address", e.target.value)} required />
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <Input label="City" value={form.city} onChange={(e) => handleChange("city", e.target.value)} />
                   <Select label="State" value={form.state} onChange={(e) => handleChange("state", e.target.value)} options={INDIAN_STATES.map((s) => ({ value: s, label: s }))} placeholder="Select state" />
                   <Input label="Pincode" value={form.pincode} onChange={(e) => handleChange("pincode", e.target.value)} />
                 </div>
+                <Input label="Address" value={form.address} onChange={(e) => handleChange("address", e.target.value)} required />
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Tags</label>
-                  <div className="flex gap-2 mb-2">
+                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Tags</label>
+                  <div className="flex gap-1.5 mb-1">
                     <Input value={tagInput} onChange={(e) => setTagInput(e.target.value)} placeholder="Add tag" className="flex-1" />
-                    <Button type="button" variant="outline" onClick={addTag}>Add</Button>
+                    <Button type="button" variant="outline" size="sm" onClick={addTag}>Add</Button>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1">
                     {form.tags.map((tag) => (
-                      <span key={tag} className="inline-flex items-center gap-1 px-2 py-1 bg-brand-blue/10 text-brand-blue rounded-full text-xs">
+                      <span key={tag} className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-brand-blue/10 text-brand-blue rounded-full text-[10px]">
                         {tag}
                         <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-500">×</button>
                       </span>
                     ))}
                   </div>
                 </div>
-                <Textarea label="Notes" value={form.notes} onChange={(e) => handleChange("notes", e.target.value)} rows={3} />
-                <div className="flex gap-3">
-                  <Button type="submit" loading={saving}>Save Changes</Button>
-                  <Button variant="outline" type="button" onClick={() => router.push(`/customers/${id}`)}>Cancel</Button>
+                <Textarea label="Notes" value={form.notes} onChange={(e) => handleChange("notes", e.target.value)} rows={2} />
+                <div className="flex gap-2 pt-1">
+                  <Button type="submit" size="sm" loading={saving}>Save Changes</Button>
+                  <Button variant="outline" size="sm" type="button" onClick={() => router.push(`/customers/${id}`)}>Cancel</Button>
                 </div>
               </form>
             </Card>
-            {documentsSection}
-            {workHistorySection}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
+              {documentsSection(true)}
+              {workHistorySection(true)}
+            </div>
           </>
         ) : (
           <>
@@ -677,8 +683,8 @@ function CustomerDetailContent() {
               </Card>
             </div>
 
-            {workHistorySection}
-            {documentsSection}
+            {workHistorySection()}
+            {documentsSection()}
           </>
         )}
       </div>
