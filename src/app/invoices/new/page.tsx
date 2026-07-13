@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { FeatureGate } from "@/components/FeatureGate";
 import { useAuth } from "@/contexts/AuthContext";
@@ -25,7 +24,7 @@ import { Card } from "@/components/ui/Card";
 import { InvoiceDocument } from "@/components/invoices/InvoiceDocument";
 import { formatCurrency } from "@/lib/utils";
 import { toast } from "sonner";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 
 type LineItemForm = { name: string; quantity: string; rate: string; discount: string; hsnSac: string };
 
@@ -157,10 +156,6 @@ export default function NewInvoicePage() {
     <DashboardLayout title="New Invoice">
       <FeatureGate feature="gstInvoice">
         <div className="max-w-5xl mx-auto space-y-3">
-          <Link href="/invoices" className="inline-flex items-center gap-1 text-xs text-slate-500">
-            <ArrowLeft className="h-4 w-4" /> Back
-          </Link>
-
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
             <Card title="Create Invoice">
               <form onSubmit={handleSubmit} className="space-y-3">

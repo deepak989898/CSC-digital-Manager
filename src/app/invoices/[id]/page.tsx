@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { getDocument, getShopDocuments } from "@/lib/firebase/firestore";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,7 +10,7 @@ import Button from "@/components/ui/Button";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 import { InvoiceDocument } from "@/components/invoices/InvoiceDocument";
 import { toast } from "sonner";
-import { ArrowLeft, Printer } from "lucide-react";
+import { Printer } from "lucide-react";
 
 export default function InvoiceDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -51,9 +50,6 @@ export default function InvoiceDetailPage() {
   return (
     <DashboardLayout title={`Invoice ${invoice.invoiceNumber}`}>
       <div className="max-w-3xl mx-auto space-y-3">
-        <Link href="/invoices" className="inline-flex items-center gap-1 text-xs text-slate-500">
-          <ArrowLeft className="h-4 w-4" /> Back
-        </Link>
         <div className="flex gap-2 no-print">
           <Button variant="outline" size="sm" onClick={() => window.print()}>
             <Printer className="h-4 w-4" /> Print

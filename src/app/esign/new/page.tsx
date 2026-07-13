@@ -2,7 +2,6 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { FeatureGate } from "@/components/FeatureGate";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,7 +16,7 @@ import Select from "@/components/ui/Select";
 import Button from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { toast } from "sonner";
-import { ArrowLeft, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 
 export default function NewESignPage() {
   const router = useRouter();
@@ -100,7 +99,6 @@ export default function NewESignPage() {
     <DashboardLayout title="New eSign Request">
       <FeatureGate feature="eSign">
         <div className="max-w-2xl mx-auto space-y-4">
-          <Link href="/esign" className="inline-flex items-center gap-1 text-sm text-slate-500"><ArrowLeft className="h-4 w-4" /> Back</Link>
           <Card title="Send for Signature">
             <form onSubmit={handleSubmit} className="space-y-4">
               <Select label="Customer" value={form.customerId} onChange={(e) => setForm({ ...form, customerId: e.target.value })} options={customers.map((c) => ({ value: c.id, label: c.fullName }))} placeholder="Select customer" required />

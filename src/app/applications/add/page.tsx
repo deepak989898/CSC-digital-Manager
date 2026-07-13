@@ -2,7 +2,6 @@
 
 import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { createDocument, getShopDocuments } from "@/lib/firebase/firestore";
@@ -19,7 +18,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { UpgradeModal } from "@/components/subscription/UpgradeModal";
 import { notifyShopEvent } from "@/lib/notifications";
 import { toast } from "sonner";
-import { ArrowLeft, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 
 const NEW_CUSTOMER_VALUE = "__new_customer__";
 
@@ -232,12 +231,6 @@ function AddApplicationContent() {
   return (
     <DashboardLayout title="New Application">
       <div className="max-w-2xl mx-auto">
-        <Link
-          href="/applications"
-          className="inline-flex items-center gap-1 text-sm text-slate-500 dark:text-slate-300 hover:text-slate-700 dark:hover:text-slate-100 mb-4"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back
-        </Link>
         <Card title="Create Application">
           <form onSubmit={handleSubmit} className="space-y-5">
             <Select

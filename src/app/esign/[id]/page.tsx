@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { getDocument, updateDocument, getShopDocuments, createDocument } from "@/lib/firebase/firestore";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,7 +12,7 @@ import Button from "@/components/ui/Button";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 import { formatDateTime } from "@/lib/utils";
 import { toast } from "sonner";
-import { ArrowLeft, Send, CheckCircle } from "lucide-react";
+import { Send, CheckCircle } from "lucide-react";
 
 export default function ESignDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -70,7 +69,6 @@ export default function ESignDetailPage() {
   return (
     <DashboardLayout title="eSign Request">
       <div className="max-w-2xl mx-auto space-y-4">
-        <Link href="/esign" className="inline-flex items-center gap-1 text-sm text-slate-500"><ArrowLeft className="h-4 w-4" /> Back</Link>
         <Card title={request.documentName}>
           <div className="space-y-3 text-sm">
             <p><strong>Customer:</strong> {request.customerName}</p>

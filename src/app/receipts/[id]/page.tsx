@@ -6,8 +6,8 @@ import { getDocument, getShopDocuments } from "@/lib/firebase/firestore";
 import { Receipt, ReceiptSettings } from "@/types";
 import { formatCurrency, formatDate, formatStatusLabel } from "@/lib/utils";
 import Button from "@/components/ui/Button";
-import { Printer, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { BackButton } from "@/components/layout/BackButton";
+import { Printer } from "lucide-react";
 import Image from "next/image";
 
 export default function ReceiptPage() {
@@ -39,9 +39,7 @@ export default function ReceiptPage() {
     <div className="min-h-screen bg-slate-100 py-8 px-4">
       <div className="max-w-lg mx-auto space-y-4">
         <div className="flex items-center justify-between no-print">
-          <Link href="/payments" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700">
-            <ArrowLeft className="h-4 w-4" /> Back
-          </Link>
+          <BackButton forceShow />
           <Button onClick={() => window.print()}>
             <Printer className="h-4 w-4" /> Print / Save PDF
           </Button>

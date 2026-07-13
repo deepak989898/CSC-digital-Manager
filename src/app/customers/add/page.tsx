@@ -15,8 +15,6 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { UpgradeModal } from "@/components/subscription/UpgradeModal";
 import { notifyShopEvent } from "@/lib/notifications";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 
 export default function AddCustomerPage() {
   const router = useRouter();
@@ -88,14 +86,6 @@ export default function AddCustomerPage() {
   return (
     <DashboardLayout title="Add Customer">
       <div className="max-w-2xl mx-auto">
-        <Link
-          href="/customers"
-          className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 mb-4"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to customers
-        </Link>
-
         <Card title="New Customer">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

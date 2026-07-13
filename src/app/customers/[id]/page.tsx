@@ -31,7 +31,6 @@ import { formatCurrency, formatDate, formatDateTime } from "@/lib/utils";
 import { downloadFileFromUrl } from "@/lib/download";
 import { toast } from "sonner";
 import {
-  ArrowLeft,
   Tag,
   Phone,
   Mail,
@@ -578,11 +577,6 @@ function CustomerDetailContent() {
   return (
     <DashboardLayout title={isEdit ? "Edit Customer" : "Customer CRM"}>
       <PageContainer size="lg">
-        <Link href="/customers" className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700">
-          <ArrowLeft className="h-4 w-4" />
-          Back to customers
-        </Link>
-
         {isEdit ? (
           <>
             <Card title="Edit Customer">

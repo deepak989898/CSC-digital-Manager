@@ -8,6 +8,7 @@ import Image from "next/image";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { PWAInstallButton } from "@/components/PWAInstallButton";
+import { BackButton } from "@/components/layout/BackButton";
 import { useRouter } from "next/navigation";
 import { logout } from "@/lib/firebase/auth";
 import { toast } from "sonner";
@@ -45,7 +46,8 @@ export function Topbar({
   return (
     <header className="sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-3 lg:px-4 py-2">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <BackButton />
           <button
             onClick={onMenuClick}
             className="lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"

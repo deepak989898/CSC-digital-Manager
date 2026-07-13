@@ -2,7 +2,6 @@
 
 import { useState, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { FeatureGate } from "@/components/FeatureGate";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,7 +19,7 @@ import Button from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 import { toast } from "sonner";
-import { ArrowLeft, Camera, Upload, AlertTriangle } from "lucide-react";
+import { Camera, Upload, AlertTriangle } from "lucide-react";
 import { logAudit } from "@/lib/audit";
 
 function ScannerNewContent() {
@@ -155,10 +154,6 @@ function ScannerNewContent() {
     <DashboardLayout title="Scan Document">
       <FeatureGate feature="ocr">
         <div className="max-w-3xl mx-auto space-y-4">
-          <Link href="/scanner" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700">
-            <ArrowLeft className="h-4 w-4" /> Back
-          </Link>
-
           {step === "upload" && (
             <Card title="Step 1: Upload & Scan">
               <div className="space-y-4">

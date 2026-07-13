@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { FeatureGate } from "@/components/FeatureGate";
 import { SettingsNav } from "@/components/layout/SettingsNav";
@@ -16,7 +15,7 @@ import Button from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { toast } from "sonner";
-import { ArrowLeft, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export default function AutomationRulesPage() {
   const { profile } = useAuth();
@@ -76,9 +75,6 @@ export default function AutomationRulesPage() {
     <DashboardLayout title="Automation Rules">
       <FeatureGate feature="smartReminders">
         <div className="max-w-3xl mx-auto space-y-4">
-          <Link href="/automation" className="inline-flex items-center gap-1 text-sm text-slate-500">
-            <ArrowLeft className="h-4 w-4" /> Back to Automation
-          </Link>
           <SettingsNav />
           <Card title="New Automation Rule">
             <form onSubmit={handleCreate} className="space-y-3">

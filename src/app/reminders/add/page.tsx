@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { createDocument, getShopDocuments } from "@/lib/firebase/firestore";
@@ -14,7 +13,6 @@ import Button from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { REMINDER_TYPES } from "@/lib/constants";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
 
 export default function AddReminderPage() {
   const router = useRouter();
@@ -60,7 +58,6 @@ export default function AddReminderPage() {
   return (
     <DashboardLayout title="Add Reminder">
       <div className="max-w-2xl mx-auto">
-        <Link href="/reminders" className="inline-flex items-center gap-1 text-sm text-slate-500 mb-4"><ArrowLeft className="h-4 w-4" /> Back</Link>
         <Card title="New Reminder">
           <form onSubmit={handleSubmit} className="space-y-4">
             <Select label="Customer" value={form.customerId} onChange={(e) => setForm({ ...form, customerId: e.target.value })} options={customers.map((c) => ({ value: c.id, label: c.fullName }))} placeholder="Select customer" required />
