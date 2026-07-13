@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useShopCollection } from "@/hooks/useShopCollection";
-import { Customer } from "@/types";
+import { Customer, Application, DocumentRecord } from "@/types";
 import Button from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -16,9 +16,16 @@ import { Plus, Eye, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { getShopDocuments } from "@/lib/firebase/firestore";
 import { useAuth } from "@/contexts/AuthContext";
-import { Application } from "@/types";
+import { DOCUMENT_TYPES } from "@/lib/constants";
 import { useEffect } from "react";
 import { formatDateTime } from "@/lib/utils";
+
+function getDocumentDisplayName(doc: DocumentRecord): string {
+  if (doc.type === "other" && doc.customName?.trim()) return doc.customName.trim();
+  if (doc.name?.trim()) return doc.name.trim();
+  const found = DOCUMENT_TYPES.find((t) => t.value === doc.type);
+  return found?.label || doc.type.replace(/_/g, " ");
+}
 
 export default function CustomersPage() {
   const router = useRouter();
@@ -28,15 +35,31 @@ export default function CustomersPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [appCounts, setAppCounts] = useState<Record<string, number>>({});
+  const [customerDocs, setCustomerDocs] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
     if (!profile?.shopId) return;
-    getShopDocuments<Application>("applications", profile.shopId).then((apps) => {
+    Promise.all([
+      getShopDocuments<Application>("applications", profile.shopId),
+      getShopDocuments<DocumentRecord>("documents", profile.shopId),
+    ]).then(([apps, docs]) => {
       const counts: Record<string, number> = {};
       apps.forEach((a) => {
         counts[a.customerId] = (counts[a.customerId] || 0) + 1;
       });
       setAppCounts(counts);
+
+      const docMap: Record<string, Set<string>> = {};
+      docs.forEach((d) => {
+        if (!d.customerId) return;
+        if (!docMap[d.customerId]) docMap[d.customerId] = new Set();
+        docMap[d.customerId].add(getDocumentDisplayName(d));
+      });
+      const byCustomer: Record<string, string[]> = {};
+      Object.entries(docMap).forEach(([customerId, names]) => {
+        byCustomer[customerId] = Array.from(names).sort((a, b) => a.localeCompare(b));
+      });
+      setCustomerDocs(byCustomer);
     });
   }, [profile?.shopId, customers]);
 
@@ -98,6 +121,7 @@ export default function CustomersPage() {
                       <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Name</th>
                       <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Mobile</th>
                       <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300 hidden md:table-cell">Address</th>
+                      <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300 hidden lg:table-cell">Documents</th>
                       <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Applications</th>
                       <th className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-300 hidden lg:table-cell">Joined</th>
                       <th className="text-right px-4 py-3 font-medium text-slate-600 dark:text-slate-300">Actions</th>
@@ -106,10 +130,41 @@ export default function CustomersPage() {
                   <tbody>
                     {paginatedItems.map((customer) => (
                       <tr key={customer.id} className="border-b border-slate-50 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700/40">
-                        <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">{customer.fullName}</td>
+                        <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
+                          <div>{customer.fullName}</div>
+                          {(customerDocs[customer.id]?.length ?? 0) > 0 && (
+                            <div className="lg:hidden flex flex-wrap gap-1 mt-1">
+                              {customerDocs[customer.id].map((docName) => (
+                                <span
+                                  key={`${customer.id}-m-${docName}`}
+                                  className="inline-flex px-1.5 py-0.5 rounded-full text-[10px] bg-blue-50 text-brand-blue dark:bg-blue-950/50 dark:text-blue-300"
+                                >
+                                  {docName}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </td>
                         <td className="px-4 py-3 text-slate-700 dark:text-slate-200">{customer.mobile}</td>
                         <td className="px-4 py-3 text-slate-600 dark:text-slate-300 hidden md:table-cell truncate max-w-[200px]">
                           {customer.address}
+                        </td>
+                        <td className="px-4 py-3 hidden lg:table-cell">
+                          {(customerDocs[customer.id]?.length ?? 0) > 0 ? (
+                            <div className="flex flex-wrap gap-1 max-w-[220px]">
+                              {customerDocs[customer.id].map((docName) => (
+                                <span
+                                  key={`${customer.id}-${docName}`}
+                                  className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-50 text-brand-blue dark:bg-blue-950/50 dark:text-blue-300 border border-blue-100 dark:border-blue-900"
+                                  title={docName}
+                                >
+                                  {docName}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-[10px] text-slate-400">No documents</span>
+                          )}
                         </td>
                         <td className="px-4 py-3">
                           <Badge status="active" label={String(appCounts[customer.id] || 0)} />
