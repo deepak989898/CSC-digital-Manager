@@ -392,7 +392,7 @@ function CustomerDetailContent() {
         {documents.length === 0 ? (
           <p className={`text-slate-500 ${compact ? "text-xs" : "text-sm"}`}>No documents uploaded for this customer yet.</p>
         ) : (
-          <div className={compact ? "space-y-1 max-h-36 overflow-y-auto" : "space-y-2"}>
+          <div className={compact ? "space-y-1" : "space-y-2"}>
             {documents.map((d) => (
               <div
                 key={d.id}
@@ -489,7 +489,7 @@ function CustomerDetailContent() {
       {applications.length === 0 ? (
         <p className={`text-slate-500 ${compact ? "text-xs" : "text-sm"}`}>No work / applications for this customer yet.</p>
       ) : (
-        <div className={`overflow-x-auto ${compact ? "max-h-40 overflow-y-auto" : ""}`}>
+        <div className="overflow-x-auto">
           <table className={`w-full ${compact ? "text-xs" : "text-sm"}`}>
             <thead>
               <tr className="border-b border-slate-100 dark:border-slate-700 text-left">
@@ -672,8 +672,8 @@ function CustomerDetailContent() {
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
-              {workHistorySection(true)}
               {documentsSection(true)}
+              {workHistorySection(true)}
             </div>
           </>
         )}

@@ -5,7 +5,6 @@ import Image from "next/image";
 import { GstSettings, Invoice, Shop } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { getInvoiceTypeLabel } from "@/lib/gst";
-import { Badge } from "@/components/ui/Badge";
 
 export interface InvoicePreviewData {
   invoiceNumber: string;
@@ -100,8 +99,6 @@ export function InvoiceDocument({
       <div className="invoice-sheet-watermark" aria-hidden>
         <span>{businessName}</span>
       </div>
-      <div className="invoice-corner invoice-corner-tl" aria-hidden />
-      <div className="invoice-corner invoice-corner-br" aria-hidden />
 
       <div className="invoice-sheet-inner">
         <div className="invoice-header-band p-4">
@@ -129,15 +126,7 @@ export function InvoiceDocument({
               <div className="mt-2 space-y-0.5">
                 <p className="text-xs text-slate-700 font-medium break-all">No: {invoice.invoiceNumber}</p>
                 <p className="text-xs text-slate-600">Date: {formatDate(invoice.invoiceDate)}</p>
-                {invoice.dueDate ? (
-                  <p className="text-xs text-slate-600">Due: {formatDate(invoice.dueDate)}</p>
-                ) : null}
               </div>
-              {invoice.status ? (
-                <div className="mt-2 sm:flex sm:justify-end">
-                  <Badge status={invoice.status} />
-                </div>
-              ) : null}
             </div>
           </div>
         </div>

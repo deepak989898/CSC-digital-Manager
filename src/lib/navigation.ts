@@ -58,7 +58,7 @@ const SECTION_LABELS: Record<string, string> = {
   invoices: "Invoices",
   esign: "eSign",
   payments: "Payments",
-  appointments: "Appointments",
+  appointments: "Schedule",
   expenses: "Expenses",
   inventory: "Inventory",
   attendance: "Attendance",

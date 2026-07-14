@@ -84,7 +84,7 @@ export default function DashboardPage() {
             { href: "/customers/add", label: "Add Customer", icon: Users },
             { href: "/applications/add", label: "New Application", icon: FileText },
             { href: "/payments", label: "Record Payment", icon: IndianRupee },
-            { href: "/appointments", label: "Book Appointment", icon: Calendar },
+            { href: "/appointments", label: "Book Schedule", icon: Calendar },
             { href: "/ai-assistant", label: "AI Assistant", icon: Bot },
             { href: "/expenses", label: "Add Expense", icon: Wallet },
             { href: "/tickets", label: "New Ticket", icon: Clock },

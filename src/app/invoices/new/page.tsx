@@ -41,7 +41,6 @@ export default function NewInvoicePage() {
     customerId: "",
     customerGstin: "",
     customerState: "",
-    dueDate: "",
     notes: "",
   });
   const [items, setItems] = useState<LineItemForm[]>([
@@ -137,7 +136,6 @@ export default function NewInvoicePage() {
         paymentStatus: "unpaid",
         amountPaid: 0,
         invoiceDate: new Date().toISOString(),
-        dueDate: form.dueDate || undefined,
         notes: form.notes?.trim() || undefined,
         isInterState: interState,
         userId: profile.userId,
@@ -187,12 +185,6 @@ export default function NewInvoicePage() {
                     onChange={(e) => setForm({ ...form, customerState: e.target.value })}
                     options={INDIAN_STATES.map((s) => ({ value: s, label: s }))}
                     placeholder="Select state"
-                  />
-                  <Input
-                    label="Due Date"
-                    type="date"
-                    value={form.dueDate}
-                    onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
                   />
                 </div>
 
@@ -315,7 +307,6 @@ export default function NewInvoicePage() {
                 invoice={{
                   invoiceNumber: previewNumber,
                   invoiceType: form.invoiceType,
-                  status: "draft",
                   customerName: selectedCustomer?.fullName || "Select customer",
                   customerMobile: selectedCustomer?.mobile || "—",
                   customerGstin: form.customerGstin,
@@ -324,7 +315,6 @@ export default function NewInvoicePage() {
                   ...totals,
                   paymentStatus: "unpaid",
                   invoiceDate: new Date().toISOString(),
-                  dueDate: form.dueDate || undefined,
                   notes: form.notes,
                   isInterState: interState,
                 }}

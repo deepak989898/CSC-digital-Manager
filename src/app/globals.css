@@ -301,29 +301,6 @@
     background: linear-gradient(180deg, transparent, rgba(37, 99, 235, 0.05));
     border-top: 2px solid rgba(37, 99, 235, 0.15);
   }
-
-  .invoice-corner {
-    position: absolute;
-    width: 48px;
-    height: 48px;
-    border-color: rgba(37, 99, 235, 0.2);
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .invoice-corner-tl {
-    top: 12px;
-    left: 12px;
-    border-top: 2px solid;
-    border-left: 2px solid;
-  }
-
-  .invoice-corner-br {
-    bottom: 12px;
-    right: 12px;
-    border-bottom: 2px solid;
-    border-right: 2px solid;
-  }
 }
 
 @media print {

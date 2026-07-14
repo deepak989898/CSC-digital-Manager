@@ -53,7 +53,7 @@ const shopNavItems: { href: string; label: string; icon: typeof LayoutDashboard;
   { href: "/invoices", label: "Invoices", icon: Receipt },
   { href: "/esign", label: "eSign", icon: FileSignature },
   { href: "/payments", label: "Payments", icon: CreditCard, permission: "payments_view" },
-  { href: "/appointments", label: "Appointments", icon: Calendar },
+  { href: "/appointments", label: "Schedule", icon: Calendar },
   { href: "/expenses", label: "Expenses", icon: Receipt },
   { href: "/inventory", label: "Inventory", icon: Package },
   { href: "/attendance", label: "Attendance", icon: UserCheck },
