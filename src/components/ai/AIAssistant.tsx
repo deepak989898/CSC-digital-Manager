@@ -21,10 +21,15 @@ export function AIAssistant({ compact = false }: AIAssistantProps) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [chatId, setChatId] = useState<string | null>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Only scroll the chat panel itself — never the page (scrollIntoView scrolls the window)
+    if (messages.length === 0) return;
+    const container = messagesContainerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
   }, [messages]);
 
   const sendMessage = async (text: string) => {
@@ -64,7 +69,7 @@ export function AIAssistant({ compact = false }: AIAssistantProps) {
   };
 
   return (
-    <div className={cn("flex flex-col bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm", compact ? "h-[500px]" : "h-[calc(100vh-200px)]")}>
+    <div className={cn("flex flex-col bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden", compact ? "h-[500px]" : "h-[min(640px,calc(100vh-11rem))]")}>
       <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-200 dark:border-slate-700">
         <div className="p-2 bg-brand-blue/10 rounded-lg">
           <Bot className="h-5 w-5 text-brand-blue" />
@@ -76,7 +81,7 @@ export function AIAssistant({ compact = false }: AIAssistantProps) {
         <Sparkles className="h-4 w-4 text-brand-orange ml-auto" />
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
         {messages.length === 0 && (
           <div className="space-y-3">
             <p className="text-sm text-slate-500 text-center">Ask me anything about your business</p>
@@ -107,7 +112,6 @@ export function AIAssistant({ compact = false }: AIAssistantProps) {
             </div>
           </div>
         )}
-        <div ref={bottomRef} />
       </div>
 
       <div className="p-4 border-t border-slate-200 dark:border-slate-700">

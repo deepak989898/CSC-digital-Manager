@@ -33,6 +33,14 @@ export function DashboardLayout({
     }
   }, [user, loading, router]);
 
+  // Always open pages at the top — avoid leftover scroll from previous route
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.scrollTo(0, 0);
+    const main = document.querySelector("main");
+    if (main) main.scrollTop = 0;
+  }, [pathname]);
+
   useEffect(() => {
     if (!loading && profile) {
       if (profile.isActive === false) {
